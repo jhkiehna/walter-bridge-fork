@@ -4,6 +4,7 @@ namespace App;
 
 use App\Sendout;
 use App\Interview;
+use App\CandidateCoded;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -24,5 +25,10 @@ class User extends Model
     public function sendouts()
     {
         return $this->hasMany(Sendout::class, 'central_id', 'central_id');
+    }
+
+    public function candidatesCoded()
+    {
+        return $this->hasMany(CandidateCoded::class, 'central_id', 'central_id');
     }
 }
