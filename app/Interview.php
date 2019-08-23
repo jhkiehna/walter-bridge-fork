@@ -2,21 +2,21 @@
 
 namespace App;
 
-use App\Interview;
+use App\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class User extends Model
+class Interview extends Model
 {
     use SoftDeletes;
 
     protected $fillable = [
-        'walter_id',
         'central_id',
+        'date'
     ];
 
-    public function interviews()
+    public function user()
     {
-        return $this->hasMany(Interview::class, 'central_id', 'central_id');
+        return $this->belongsTo(User::class, 'central_id', 'central_id');
     }
 }
