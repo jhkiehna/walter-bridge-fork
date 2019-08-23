@@ -17,8 +17,8 @@ class CreateInterviewsTable extends Migration
             $table->bigIncrements('id');
             $table->bigInteger('central_id')->unsigned();
             $table->dateTime('date');
-            $table->timestamps();
 
+            $table->timestamps();
             $table->softDeletes();
 
             $table->foreign('central_id')->references('central_id')->on('users');

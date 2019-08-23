@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateUsersTable extends Migration
+class CreateSendoutsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,15 @@ class CreateUsersTable extends Migration
      */
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('sendouts', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('walter_id')->unsigned()->unique()->nullable()->default(null);
-            $table->bigInteger('central_id')->unsigned()->unique()->nullable()->default(null);
-            //Do we need the extension from walter?
+            $table->bigInteger('central_id')->unsigned();
+            $table->dateTime('date');
 
             $table->timestamps();
             $table->softDeletes();
+
+            $table->foreign('central_id')->references('central_id')->on('users');
         });
     }
 
@@ -31,6 +32,6 @@ class CreateUsersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('sendouts');
     }
 }
