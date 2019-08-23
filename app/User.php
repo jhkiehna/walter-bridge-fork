@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Call;
 use App\Sendout;
 use App\Interview;
 use App\CandidateCoded;
@@ -30,5 +31,10 @@ class User extends Model
     public function candidatesCoded()
     {
         return $this->hasMany(CandidateCoded::class, 'central_id', 'central_id');
+    }
+
+    public function calls()
+    {
+        return $this->hasMany(Call::class, 'central_id', 'central_id');
     }
 }

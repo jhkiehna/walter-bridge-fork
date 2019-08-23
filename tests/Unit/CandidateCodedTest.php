@@ -10,7 +10,7 @@ class CandidateCodedTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testUserCanBeCreated()
+    public function testCandidateCodedCanBeCreated()
     {
         $candidateCoded = factory(CandidateCoded::class)->create();
 

@@ -29,8 +29,8 @@ class UserTest extends TestCase
 
         $this->assertTrue($user->walter_id != null);
         $this->assertTrue($user->central_id != null);
-        $this->assertTrue($user->candidatesCoded()->first() != null);
-        $this->assertTrue($user->interviews()->first() != null);
-        $this->assertTrue($user->sendouts()->first() != null);
+        $this->assertFalse($user->candidatesCoded->isEmpty());
+        $this->assertFalse($user->interviews->isEmpty());
+        $this->assertFalse($user->sendouts->isEmpty());
     }
 }

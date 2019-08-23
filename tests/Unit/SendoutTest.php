@@ -10,7 +10,7 @@ class SendoutTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testUserCanBeCreated()
+    public function testSendoutCanBeCreated()
     {
         $sendout = factory(Sendout::class)->create();
 

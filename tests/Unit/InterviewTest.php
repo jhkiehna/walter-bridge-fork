@@ -10,7 +10,7 @@ class InterviewTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testUserCanBeCreated()
+    public function testInterviewCanBeCreated()
     {
         $interview = factory(Interview::class)->create();
 
