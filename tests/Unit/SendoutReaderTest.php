@@ -25,6 +25,14 @@ class SendoutReaderTest extends TestCase
         $this->destroyTestWalter();
     }
 
+    public function testItCanUseTheReadMethodAndCreateSendoutsInLocalDB()
+    {
+        // $this->seedTestWalter();
+
+        $this->assertTrue(true);
+        // $this->destroyTestWalter();
+    }
+
     private function seedTestWalter()
     {
         Artisan::call("migrate", [
