@@ -102,11 +102,18 @@ return [
             'driver' => 'sqlsrv',
             'host' => env('DB_WALTER_HOST', 'localhost'),
             'port' => env('DB_WALTER_PORT', '1433'),
-            'database' => env('DB_WALTER_DATABASE', 'forge'),
+            'database' => env('DB_WALTER_DATABASE', database_path('walter-testing.sqlite')),
             'username' => env('DB_WALTER_USERNAME', 'forge'),
             'password' => env('DB_WALTER_PASSWORD', ''),
             'charset' => 'utf8',
             'prefix' => '',
+        ],
+
+        'walter_test' => [
+            'driver' => 'sqlite',
+            'database' => database_path('walter-testing.sqlite'),
+            'prefix' => '',
+            'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
         ],
 
     ],

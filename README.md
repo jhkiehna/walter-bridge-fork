@@ -12,6 +12,7 @@
 -   `composer install`
 -   `cp .env.example .env`
 -   Edit environment variables in .env appropriately; fill in DB_WALTER env vars
+-   Run `touch database/testing.sqlite && touch database/walter-testing.sqlite`
 
 ## Running Tests
 
