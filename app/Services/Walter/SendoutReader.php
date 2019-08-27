@@ -33,10 +33,10 @@ class SendoutReader extends Reader
 
     public function getNewSendouts()
     {
-        $sendout = $this->sendoutModel->orderBy('date', 'desc')->first();
+        $latestSendout = $this->sendoutModel->orderBy('date', 'desc')->first();
 
-        if ($sendout) {
-            $lastReadDate = Carbon::parse($this->sendoutModel->orderBy('date', 'desc')->first()->date);
+        if ($latestSendout) {
+            $lastReadDate = Carbon::parse($latestSendout->date);
 
             return collect(
                 DB::connection($this->walterDriver)

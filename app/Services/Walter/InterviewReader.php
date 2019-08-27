@@ -11,45 +11,40 @@ class InterviewReader extends Reader
 {
     public function read()
     {
-        $sendouts = $this->getNewSendouts();
+        $interviews = $this->getNewInterviews();
 
-        if (!$sendouts->isEmpty()) {
-            $sendouts->each(function ($sendout) {
-                $centralId = $this->translateWalterUserIdToCentralUserId($sendout->Consultant);
+        if (!$interviews->isEmpty()) {
+            $interviews->each(function ($interview) {
+                $centralId = $this->translateWalterUserIdToCentralUserId($interview->consultant);
 
-                $localSendout = $this->sendoutModel->create([
+                $localInterview = $this->interviewModel->create([
                     'central_id' => $centralId ?? 1,
-                    'walter_consultant_id' => (int) $sendout->Consultant,
-                    'walter_sendout_id' => $sendout->id,
-                    'date' => $sendout->date
+                    'walter_consultant_id' => (int) $interview->consultant,
+                    'walter_interview_id' => $interview->id,
+                    'date' => $interview->date
                 ]);
 
                 if (!$centralId) {
-                    FailedItem::make()->failable()->associate($localSendout)->save();
+                    FailedItem::make()->failable()->associate($localInterview)->save();
                 }
             });
         }
     }
 
-    public function getNewSendouts()
+    public function getNewInterviews()
     {
-        $sendout = $this->sendoutModel->orderBy('date', 'desc')->first();
+        $latestInterview = $this->interviewModel->orderBy('walter_interview_id', 'desc')->first();
 
-        if ($sendout) {
-            $lastReadDate = Carbon::parse($this->sendoutModel->orderBy('date', 'desc')->first()->date);
-
+        if ($latestInterview) {
             return collect(
                 DB::connection($this->walterDriver)
-                    ->table('SendOut')
+                    ->table('jobOrder_interview')
                     ->select([
-                        'soid as id',
-                        'dateSent as date',
-                        'consultant',
-                        'firstResume'
+                        'intID as id',
+                        'dateCreated as date',
+                        'consultant'
                     ])
-                    ->where('firstResume', 1)
-                    ->whereNotNull('dateSent')
-                    ->where('dateSent', '>', $lastReadDate)
+                    ->where('intID', '>', $latestInterview->walter_interview_id)
                     ->get()
             );
         }

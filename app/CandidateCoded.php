@@ -14,6 +14,8 @@ class CandidateCoded extends Model
 
     protected $fillable = [
         'central_id',
+        'walter_consultant_id',
+        'walter_coded_id',
         'date'
     ];
 

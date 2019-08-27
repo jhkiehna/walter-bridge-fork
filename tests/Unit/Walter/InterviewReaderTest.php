@@ -3,9 +3,11 @@
 namespace Tests\Unit;
 
 use App\User;
+use App\Interview;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Tests\Walter\WalterBaseTestCase;
+use App\Services\Walter\InterviewReader;
 
 class InterviewReaderTest extends WalterBaseTestCase
 {
@@ -28,36 +30,33 @@ class InterviewReaderTest extends WalterBaseTestCase
         DB::setDefaultConnection('sqlite_testing');
     }
 
-    public function testTest()
+    public function testItCanGetNewInterviews()
     {
-        $this->assertTrue(true);
+        factory(Interview::class)->create([
+            'central_id' => 1,
+            'walter_interview_id' => 1,
+            'date' => Carbon::now()->subWeek(2),
+        ]);
+
+        $interviews = (new InterviewReader)->getNewInterviews();
+
+        $this->assertFalse($interviews->isEmpty());
+        $this->assertEquals($interviews->first()->id, 2);
+        $this->assertObjectHasAttribute('consultant', $interviews->first());
     }
 
-    // public function testItCanGetNewSendouts()
-    // {
-    //     factory(Sendout::class)->create([
-    //         'central_id' => 1,
-    //         'date' => Carbon::now()->subWeek(2),
-    //     ]);
+    public function testItCanUseTheReadMethodAndCreateSendoutsInLocalDB()
+    {
+        factory(Interview::class)->create([
+            'central_id' => 1,
+            'walter_interview_id' => 1,
+            'date' => Carbon::now()->subWeek(2),
+        ]);
 
-    //     $sendouts = (new SendoutReader)->getNewSendouts();
+        (new InterviewReader)->read();
+        $localInterviews = Interview::all();
 
-    //     $this->assertFalse($sendouts->isEmpty());
-    //     $this->assertEquals($sendouts->first()->id, 2);
-    //     $this->assertObjectHasAttribute('Consultant', $sendouts->first());
-    // }
-
-    // public function testItCanUseTheReadMethodAndCreateSendoutsInLocalDB()
-    // {
-    //     factory(Sendout::class)->create([
-    //         'central_id' => 1,
-    //         'date' => Carbon::now()->subWeek(2),
-    //     ]);
-
-    //     (new SendoutReader)->read();
-    //     $localSendouts = Sendout::all();
-
-    //     $this->assertFalse($localSendouts->isEmpty());
-    //     $this->assertTrue($localSendouts->first()->user != null);
-    // }
+        $this->assertFalse($localInterviews->isEmpty());
+        $this->assertTrue($localInterviews->first()->user != null);
+    }
 }

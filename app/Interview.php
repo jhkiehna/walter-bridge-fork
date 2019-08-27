@@ -12,6 +12,8 @@ class Interview extends Model
 
     protected $fillable = [
         'central_id',
+        'walter_consultant_id',
+        'walter_interview_id',
         'date'
     ];
 
