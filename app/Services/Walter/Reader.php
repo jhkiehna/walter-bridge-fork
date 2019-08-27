@@ -23,6 +23,10 @@ abstract class Reader
     {
         $user = $this->userModel->where('walter_id', $consultantId)->first();
 
+        if (!$user) {
+            return 1;
+        }
+
         return $user->central_id;
     }
 }

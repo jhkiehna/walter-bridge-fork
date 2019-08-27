@@ -19,6 +19,12 @@ class SendoutReaderTest extends TestCase
     {
         parent::setUp();
 
+        Artisan::call("db:seed", [
+            "--database" => "sqlite_testing",
+            "--env" => "testing"
+        ]);
+        $users = User::all();
+
         Artisan::call("migrate:fresh", [
             "--path" => "tests/TestWalterDBMigration",
             "--database" => "walter_test",
@@ -32,7 +38,7 @@ class SendoutReaderTest extends TestCase
                     'soid' => $i,
                     'soType' => 2,
                     'DateSent' => Carbon::now()->subDays($i + 1),
-                    'Consultant' => rand(1, 10),
+                    'Consultant' => $users[$i]->walter_id ?? 1,
                     'firstResume' => true
                 ]);
         }
@@ -51,11 +57,6 @@ class SendoutReaderTest extends TestCase
 
     public function testItCanUseTheReadMethodAndCreateSendoutsInLocalDB()
     {
-        Artisan::call("db:seed", [
-            "--database" => "sqlite_testing",
-            "--env" => "testing"
-        ]);
-
         (new SendoutReader)->read();
         $localSendouts = Sendout::all();
 

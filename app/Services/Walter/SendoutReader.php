@@ -28,23 +28,21 @@ class SendoutReader extends Reader
 
         if ($sendout) {
             $lastReadDate = Carbon::parse($this->sendoutModel->orderBy('date', 'desc')->first()->date);
-        } else {
-            $lastReadDate = Carbon::now()->subWeek();
-        }
 
-        return collect(
-            DB::connection($this->walterDriver)
-                ->table('SendOut')
-                ->select([
-                    'soid as id',
-                    'dateSent as date',
-                    'consultant',
-                    'firstResume'
-                ])
-                ->where('firstResume', 1)
-                ->whereNotNull('dateSent')
-                ->where('dateSent', '>', $lastReadDate)
-                ->get()
-        );
+            return collect(
+                DB::connection($this->walterDriver)
+                    ->table('SendOut')
+                    ->select([
+                        'soid as id',
+                        'dateSent as date',
+                        'consultant',
+                        'firstResume'
+                    ])
+                    ->where('firstResume', 1)
+                    ->whereNotNull('dateSent')
+                    ->where('dateSent', '>', $lastReadDate)
+                    ->get()
+            );
+        }
     }
 }

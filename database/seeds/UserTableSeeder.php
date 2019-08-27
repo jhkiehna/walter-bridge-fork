@@ -22,6 +22,7 @@ class UserTableSeeder extends Seeder
     }
 
     private static $CENTRAL_WALTER_USER_MAP = [
+        ['central_id' => 1, 'walter_id' => null, 'email' => 'system@kimmel.com'],
         ['central_id' => 2, 'walter_id' => 9, 'email' => 'charlie@kimmel.com'],
         ['central_id' => 3, 'walter_id' => 4, 'email' => 'josh@kimmel.com'],
         ['central_id' => 4, 'walter_id' => 285, 'email' => 'jacob@kimmel.com'],
