@@ -16,6 +16,7 @@ class CreateSendoutsTable extends Migration
         Schema::create('sendouts', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('central_id')->unsigned();
+            $table->bigInteger('walter_consultant_id')->unsigned();
             $table->dateTime('date');
 
             $table->timestamps();
