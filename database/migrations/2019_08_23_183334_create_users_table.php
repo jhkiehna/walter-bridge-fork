@@ -15,8 +15,9 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('walter_id')->unsigned()->unique()->nullable()->default(null);
             $table->bigInteger('central_id')->unsigned()->unique()->nullable()->default(null);
+            $table->bigInteger('walter_id')->unsigned()->unique()->nullable()->default(null);
+            $table->string('email')->unique()->nullable()->default(null);
             //Do we need the extension from walter?
 
             $table->timestamps();

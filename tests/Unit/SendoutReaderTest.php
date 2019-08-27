@@ -51,12 +51,10 @@ class SendoutReaderTest extends TestCase
 
     public function testItCanUseTheReadMethodAndCreateSendoutsInLocalDB()
     {
-        for ($i = 1; $i <= 10; $i++) {
-            factory(User::class)->create([
-                'central_id' => $i + 10,
-                'walter_id' => $i
-            ]);
-        }
+        Artisan::call("db:seed", [
+            "--database" => "sqlite_testing",
+            "--env" => "testing"
+        ]);
 
         (new SendoutReader)->read();
         $localSendouts = Sendout::all();
