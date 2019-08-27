@@ -5,6 +5,7 @@ namespace App\Services\Walter;
 use App\User;
 use App\Sendout;
 use App\Interview;
+use App\CandidateCoded;
 
 abstract class Reader
 {
@@ -13,6 +14,7 @@ abstract class Reader
     private $userModel;
     protected $sendoutModel;
     protected $interviewModel;
+    protected $candidateCoded;
 
     public function __construct()
     {
@@ -20,6 +22,7 @@ abstract class Reader
         $this->userModel = new User;
         $this->sendoutModel = new Sendout;
         $this->interviewModel = new Interview;
+        $this->candidateCodedModel = new CandidateCoded;
     }
 
     protected function translateWalterUserIdToCentralUserId($consultantId)

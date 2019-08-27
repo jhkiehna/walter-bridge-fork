@@ -45,7 +45,7 @@ class InterviewReaderTest extends WalterBaseTestCase
         $this->assertObjectHasAttribute('consultant', $interviews->first());
     }
 
-    public function testItCanUseTheReadMethodAndCreateSendoutsInLocalDB()
+    public function testItCanUseTheReadMethodAndCreateInterviewsInLocalDB()
     {
         factory(Interview::class)->create([
             'central_id' => 1,
