@@ -53,17 +53,15 @@ class SendoutReaderTest extends TestCase
     {
         for ($i = 1; $i <= 10; $i++) {
             factory(User::class)->create([
-                'central_id' => $i * 2,
+                'central_id' => $i + 10,
                 'walter_id' => $i
             ]);
         }
 
-        $sendoutReader = new SendoutReader;
-
-        $sendoutReader->read();
-
+        (new SendoutReader)->read();
         $localSendouts = Sendout::all();
 
         $this->assertFalse($localSendouts->isEmpty());
+        $this->assertTrue($localSendouts->first()->user != null);
     }
 }

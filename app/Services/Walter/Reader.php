@@ -19,9 +19,9 @@ abstract class Reader
         $this->sendoutModel = new Sendout;
     }
 
-    protected function translateWalterUserIdToCentralUserId($walterId)
+    protected function translateWalterUserIdToCentralUserId($consultantId)
     {
-        $user = $this->userModel->where('walter_id', $walterId)->first();
+        $user = $this->userModel->where('walter_id', $consultantId)->first();
 
         return $user->central_id;
     }
