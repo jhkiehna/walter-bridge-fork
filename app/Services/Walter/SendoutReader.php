@@ -15,14 +15,12 @@ class SendoutReader extends Reader
         if (!$sendouts->isEmpty()) {
             $sendouts->each(function ($sendout) {
                 $this->sendoutModel->create([
-                    'central_id' => $this->translateWalterUserIdToCentralUserId($sendout->consultant),
+                    'central_id' => $this->translateWalterUserIdToCentralUserId($sendout->Consultant),
                     'walter_id' => $sendout->id,
                     'date' => $sendout->date
                 ]);
             });
         }
-
-        return;
     }
 
     public function getNewSendouts()

@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use App\User;
 use App\Sendout;
 use Tests\TestCase;
 use Illuminate\Support\Carbon;
@@ -14,28 +15,11 @@ class SendoutReaderTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testItCanGetNewSendouts()
+    public function setUp(): void
     {
-        $this->seedTestWalter();
+        parent::setUp();
 
-        $sendouts = (new SendoutReader)->getNewSendouts();
-
-        $this->assertFalse($sendouts->isEmpty());
-
-        $this->destroyTestWalter();
-    }
-
-    public function testItCanUseTheReadMethodAndCreateSendoutsInLocalDB()
-    {
-        // $this->seedTestWalter();
-
-        $this->assertTrue(true);
-        // $this->destroyTestWalter();
-    }
-
-    private function seedTestWalter()
-    {
-        Artisan::call("migrate", [
+        Artisan::call("migrate:fresh", [
             "--path" => "tests/TestWalterDBMigration",
             "--database" => "walter_test",
             "--env" => "testing"
@@ -47,8 +31,8 @@ class SendoutReaderTest extends TestCase
                 ->insert([
                     'soid' => $i,
                     'soType' => 2,
-                    'DateCreated' => Carbon::now()->subDays($i),
                     'DateSent' => Carbon::now()->subDays($i + 1),
+                    'Consultant' => rand(1, 10),
                     'firstResume' => true
                 ]);
         }
@@ -56,14 +40,30 @@ class SendoutReaderTest extends TestCase
         DB::setDefaultConnection('sqlite_testing');
     }
 
-    private function destroyTestWalter()
+    public function testItCanGetNewSendouts()
     {
-        Artisan::call("migrate:reset", [
-            "--path" => "tests/TestWalterDBMigration",
-            "--database" => "walter_test",
-            "--env" => "testing"
-        ]);
+        $sendouts = (new SendoutReader)->getNewSendouts();
 
-        DB::setDefaultConnection('sqlite_testing');
+        $this->assertFalse($sendouts->isEmpty());
+        $this->assertEquals($sendouts->first()->id, 1);
+        $this->assertObjectHasAttribute('Consultant', $sendouts->first());
+    }
+
+    public function testItCanUseTheReadMethodAndCreateSendoutsInLocalDB()
+    {
+        for ($i = 1; $i <= 10; $i++) {
+            factory(User::class)->create([
+                'central_id' => $i * 2,
+                'walter_id' => $i
+            ]);
+        }
+
+        $sendoutReader = new SendoutReader;
+
+        $sendoutReader->read();
+
+        $localSendouts = Sendout::all();
+
+        $this->assertFalse($localSendouts->isEmpty());
     }
 }
