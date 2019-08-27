@@ -31,13 +31,13 @@ class SendoutReaderTest extends TestCase
             "--env" => "testing"
         ]);
 
-        for ($i = 1; $i <= 14; $i++) {
+        for ($i = 2; $i <= 14; $i++) {
             DB::connection('walter_test')
                 ->table('SendOut')
                 ->insert([
                     'soid' => $i,
                     'soType' => 2,
-                    'DateSent' => Carbon::now()->subDays($i + 1),
+                    'DateSent' => Carbon::now()->subDays($i),
                     'Consultant' => $users[$i]->walter_id ?? 1,
                     'firstResume' => true
                 ]);
@@ -48,15 +48,25 @@ class SendoutReaderTest extends TestCase
 
     public function testItCanGetNewSendouts()
     {
+        factory(Sendout::class)->create([
+            'central_id' => 1,
+            'date' => Carbon::now()->subWeek(2),
+        ]);
+
         $sendouts = (new SendoutReader)->getNewSendouts();
 
         $this->assertFalse($sendouts->isEmpty());
-        $this->assertEquals($sendouts->first()->id, 1);
+        $this->assertEquals($sendouts->first()->id, 2);
         $this->assertObjectHasAttribute('Consultant', $sendouts->first());
     }
 
     public function testItCanUseTheReadMethodAndCreateSendoutsInLocalDB()
     {
+        factory(Sendout::class)->create([
+            'central_id' => 1,
+            'date' => Carbon::now()->subWeek(2),
+        ]);
+
         (new SendoutReader)->read();
         $localSendouts = Sendout::all();
 

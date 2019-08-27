@@ -16,7 +16,8 @@ class SendoutReader extends Reader
             $sendouts->each(function ($sendout) {
                 $this->sendoutModel->create([
                     'central_id' => $this->translateWalterUserIdToCentralUserId($sendout->Consultant),
-                    'walter_consultant_id' => $sendout->Consultant,
+                    'walter_consultant_id' => (int) $sendout->Consultant,
+                    'walter_sendout_id' => $sendout->id,
                     'date' => $sendout->date
                 ]);
             });

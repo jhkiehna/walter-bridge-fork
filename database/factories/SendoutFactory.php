@@ -23,6 +23,8 @@ $factory->define(Sendout::class, function (Faker $faker) {
         'central_id' => function () {
             return factory(User::class)->create()->central_id;
         },
+        'walter_consultant_id' => rand(1, 100),
+        'walter_sendout_id' => rand(1, 100),
         'date' => Carbon::now()
     ];
 });

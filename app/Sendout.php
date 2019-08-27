@@ -12,6 +12,8 @@ class Sendout extends Model
 
     protected $fillable = [
         'central_id',
+        'walter_consultant_id',
+        'walter_sendout_id',
         'date'
     ];
 

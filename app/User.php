@@ -14,8 +14,8 @@ class User extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'walter_id',
         'central_id',
+        'walter_id',
     ];
 
     public function interviews()

@@ -17,6 +17,7 @@ class CreateSendoutsTable extends Migration
             $table->bigIncrements('id');
             $table->bigInteger('central_id')->unsigned();
             $table->bigInteger('walter_consultant_id')->unsigned();
+            $table->bigInteger('walter_sendout_id')->unsigned();
             $table->dateTime('date');
 
             $table->timestamps();

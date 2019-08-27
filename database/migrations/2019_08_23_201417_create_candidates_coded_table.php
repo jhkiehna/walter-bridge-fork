@@ -16,6 +16,7 @@ class CreateCandidatesCodedTable extends Migration
         Schema::create('candidates_coded', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('central_id')->unsigned();
+            $table->bigInteger('walter_coded_id')->unsigned();
             $table->dateTime('date');
 
             $table->timestamps();
