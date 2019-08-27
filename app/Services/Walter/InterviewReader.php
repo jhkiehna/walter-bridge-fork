@@ -7,7 +7,7 @@ use App\FailedItem;
 use App\Services\Walter\Reader;
 use Illuminate\Support\Facades\DB;
 
-class SendoutReader extends Reader
+class InterviewReader extends Reader
 {
     public function read()
     {

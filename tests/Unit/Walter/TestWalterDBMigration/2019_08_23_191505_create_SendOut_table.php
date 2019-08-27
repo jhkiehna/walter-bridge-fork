@@ -15,7 +15,6 @@ class CreateSendOutTable extends Migration
     {
         Schema::create('SendOut', function (Blueprint $table) {
             $table->bigIncrements('soid');
-            $table->integer('soType');
             $table->dateTime('DateSent');
             $table->integer('Consultant');
             $table->boolean('firstResume');
