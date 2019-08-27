@@ -3,6 +3,7 @@
 namespace App;
 
 use App\User;
+use App\FailedItem;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -20,5 +21,10 @@ class Sendout extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'central_id', 'central_id');
+    }
+
+    public function failedItems()
+    {
+        return $this->morphMany(FailedItem::class, 'failable');
     }
 }

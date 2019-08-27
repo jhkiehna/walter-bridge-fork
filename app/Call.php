@@ -34,4 +34,9 @@ class Call extends Model
     {
         return $this->belongsTo(User::class, 'central_id', 'central_id');
     }
+
+    public function failedItems()
+    {
+        return $this->morphMany(FailedItem::class, 'failable');
+    }
 }

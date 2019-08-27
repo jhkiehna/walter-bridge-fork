@@ -2,6 +2,7 @@
 
 namespace App\Services\Walter;
 
+use App\FailedItem;
 use Illuminate\Support\Carbon;
 use App\Services\Walter\Reader;
 use Illuminate\Support\Facades\DB;
@@ -14,12 +15,18 @@ class SendoutReader extends Reader
 
         if (!$sendouts->isEmpty()) {
             $sendouts->each(function ($sendout) {
-                $this->sendoutModel->create([
-                    'central_id' => $this->translateWalterUserIdToCentralUserId($sendout->Consultant),
+                $centralId = $this->translateWalterUserIdToCentralUserId($sendout->Consultant);
+
+                $localSendout = $this->sendoutModel->create([
+                    'central_id' => $centralId ?? 1,
                     'walter_consultant_id' => (int) $sendout->Consultant,
                     'walter_sendout_id' => $sendout->id,
                     'date' => $sendout->date
                 ]);
+
+                if (!$centralId) {
+                    FailedItem::make()->failable()->associate($localSendout)->save();
+                }
             });
         }
     }
