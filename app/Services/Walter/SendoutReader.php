@@ -24,7 +24,7 @@ class SendoutReader extends Reader
                     'date' => $sendout->date
                 ]);
 
-                if (!$centralId) {
+                if (!$centralId || empty($localSendout->date)) {
                     FailedItem::make()->failable()->associate($localSendout)->save();
                 }
             });

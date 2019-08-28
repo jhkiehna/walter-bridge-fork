@@ -17,32 +17,12 @@ class CreateCallsTable extends Migration
             $table->bigIncrements('id');
             $table->bigInteger('central_id')->unsigned();
 
-            $table->integer('extension')->unsigned();
-            $table->integer('trunk')->unsigned()->nullable();
-            $table->string('first_name')->nullable();
-            $table->string('last_name')->nullable();
-
             $table->boolean('valid');
-            $table->enum('type', ['Incoming', 'Outgoing', 'Transfer'])->nullable();
-            $table->dateTime('date');
-            $table->integer('duration')->unsigned();
-
-            $table->integer('areacode')->unsigned()->nullable();
-            $table->integer('phone_number')->unsigned()->nullable();
             $table->bigInteger('dialed_number')->unsigned();
+            $table->enum('type', ['Incoming', 'Outgoing', 'Transfer'])->nullable();
 
-            $table->string('city')->nullable();
-            $table->string('state')->nullable();
-
-            $table->boolean('incoming');
-            $table->boolean('long_distance');
-            $table->boolean('international');
-            $table->boolean('local');
-
-            $table->integer('department_id')->nullable();
-            $table->string('department')->nullable();
-
-            $table->string('raw');
+            $table->integer('duration')->unsigned();
+            $table->dateTime('call_timestamp');
 
             $table->timestamps();
             $table->softDeletes();
