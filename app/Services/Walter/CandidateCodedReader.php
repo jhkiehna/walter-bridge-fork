@@ -3,7 +3,7 @@
 namespace App\Services\Walter;
 
 use App\FailedItem;
-use App\Services\Walter\Reader;
+use App\Services\Reader;
 use Illuminate\Support\Facades\DB;
 
 class CandidateCodedReader extends Reader

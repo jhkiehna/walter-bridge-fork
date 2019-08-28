@@ -9,25 +9,13 @@ class Call extends Model
 {
     protected $fillable = [
         'central_id',
+        'intranet_user_id',
+        'stats_call_id',
         'valid',
-        'date',
-        'type',
-        'trunk',
-        'duration',
-        'areacode',
         'dialed_number',
-        'phone_number',
-        'extension',
-        'city',
-        'state',
-        'long_distance',
-        'international',
-        'local',
-        'department',
-        'department_id',
-        'raw',
-        'first_name',
-        'last_name'
+        'type',
+        'duration',
+        'date',
     ];
 
     public function user()

@@ -23,9 +23,11 @@ $factory->define(Call::class, function (Faker $faker) {
         'central_id' => function () {
             return factory(User::class)->create()->central_id;
         },
+        'intranet_user_id' => $faker->randomNumber(),
+        'stats_call_id' => $faker->randomNumber(),
         'valid' => $faker->boolean(),
         'dialed_number' => $faker->numberBetween($min = 0000000, $max = 9999999),
         'duration' => $faker->randomNumber(),
-        'call_timestamp' => Carbon::now(),
+        'date' => Carbon::now(),
     ];
 });

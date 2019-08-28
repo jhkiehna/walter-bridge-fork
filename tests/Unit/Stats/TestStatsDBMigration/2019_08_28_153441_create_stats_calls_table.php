@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateCallsTable extends Migration
+class CreateStatsCallsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -15,22 +15,16 @@ class CreateCallsTable extends Migration
     {
         Schema::create('calls', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('central_id')->unsigned();
-            $table->bigInteger('intranet_user_id')->unsigned();
-            $table->bigInteger('stats_call_id')->unsigned();
-
+            $table->bigInteger('user_id')->unsigned();
             $table->boolean('valid');
             $table->bigInteger('dialed_number')->unsigned();
             $table->enum('type', ['Incoming', 'Outgoing', 'Transfer'])->nullable();
-
-            $table->integer('duration')->unsigned();
             $table->dateTime('date');
+            $table->integer('duration')->unsigned();
+            $table->string('raw')->nullable()->default(null);
 
             $table->timestamps();
             $table->softDeletes();
-
-            $table->foreign('central_id')->references('central_id')->on('users');
-            $table->index('date');
         });
     }
 

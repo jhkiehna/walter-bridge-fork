@@ -4,7 +4,7 @@ namespace App\Services\Walter;
 
 use Carbon\Carbon;
 use App\FailedItem;
-use App\Services\Walter\Reader;
+use App\Services\Reader;
 use Illuminate\Support\Facades\DB;
 
 class SendoutReader extends Reader
@@ -24,7 +24,7 @@ class SendoutReader extends Reader
                     'date' => $sendout->date
                 ]);
 
-                if (!$centralId || empty($localSendout->date)) {
+                if (!$centralId) {
                     FailedItem::make()->failable()->associate($localSendout)->save();
                 }
             });
