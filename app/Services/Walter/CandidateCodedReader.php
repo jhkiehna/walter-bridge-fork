@@ -2,7 +2,6 @@
 
 namespace App\Services\Walter;
 
-use Carbon\Carbon;
 use App\FailedItem;
 use App\Services\Walter\Reader;
 use Illuminate\Support\Facades\DB;
