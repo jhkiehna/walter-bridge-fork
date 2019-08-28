@@ -58,5 +58,7 @@ class InterviewReaderTest extends WalterBaseTestCase
 
         $this->assertFalse($localInterviews->isEmpty());
         $this->assertTrue($localInterviews->first()->user != null);
+        $this->assertTrue($localInterviews->first()->walter_consultant_id != null);
+        $this->assertTrue($localInterviews->first()->walter_interview_id != null);
     }
 }

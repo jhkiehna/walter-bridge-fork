@@ -42,7 +42,7 @@ class SendoutReaderTest extends WalterBaseTestCase
 
         $this->assertFalse($sendouts->isEmpty());
         $this->assertEquals($sendouts->first()->id, 2);
-        $this->assertObjectHasAttribute('Consultant', $sendouts->first());
+        $this->assertObjectHasAttribute('consultant', $sendouts->first());
     }
 
     public function testItCanUseTheReadMethodAndCreateSendoutsInLocalDB()
@@ -57,5 +57,7 @@ class SendoutReaderTest extends WalterBaseTestCase
 
         $this->assertFalse($localSendouts->isEmpty());
         $this->assertTrue($localSendouts->first()->user != null);
+        $this->assertTrue($localSendouts->first()->walter_consultant_id != null);
+        $this->assertTrue($localSendouts->first()->walter_sendout_id != null);
     }
 }

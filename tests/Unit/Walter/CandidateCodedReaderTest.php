@@ -58,5 +58,7 @@ class CandidateCodedReaderTest extends WalterBaseTestCase
 
         $this->assertFalse($localCandidatesCoded->isEmpty());
         $this->assertTrue($localCandidatesCoded->first()->user != null);
+        $this->assertTrue($localCandidatesCoded->first()->walter_consultant_id != null);
+        $this->assertTrue($localCandidatesCoded->first()->walter_coded_id != null);
     }
 }

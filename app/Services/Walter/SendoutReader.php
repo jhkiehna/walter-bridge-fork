@@ -15,11 +15,11 @@ class SendoutReader extends Reader
 
         if (!$sendouts->isEmpty()) {
             $sendouts->each(function ($sendout) {
-                $centralId = $this->translateWalterUserIdToCentralUserId($sendout->Consultant);
+                $centralId = $this->translateWalterUserIdToCentralUserId($sendout->consultant);
 
                 $localSendout = $this->sendoutModel->create([
                     'central_id' => $centralId ?? 1,
-                    'walter_consultant_id' => (int) $sendout->Consultant,
+                    'walter_consultant_id' => (int) $sendout->consultant,
                     'walter_sendout_id' => $sendout->id,
                     'date' => $sendout->date
                 ]);
@@ -44,7 +44,7 @@ class SendoutReader extends Reader
                     ->select([
                         'soid as id',
                         'dateSent as date',
-                        'consultant',
+                        'Consultant as consultant',
                         'firstResume'
                     ])
                     ->where('firstResume', 1)
