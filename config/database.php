@@ -50,7 +50,14 @@ return [
             'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
         ],
 
-        'sqlite_testing_stats' => [
+        'sqlite_walter_test' => [
+            'driver' => 'sqlite',
+            'database' => database_path('walter-testing.sqlite'),
+            'prefix' => '',
+            'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
+        ],
+
+        'sqlite_stats_test' => [
             'driver' => 'sqlite',
             'database' => database_path('testing-stats.sqlite'),
             'prefix' => '',
@@ -134,13 +141,6 @@ return [
             'password' => env('DB_WALTER_PASSWORD', ''),
             'charset' => 'utf8',
             'prefix' => '',
-        ],
-
-        'walter_test' => [
-            'driver' => 'sqlite',
-            'database' => database_path('walter-testing.sqlite'),
-            'prefix' => '',
-            'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
         ],
 
     ],

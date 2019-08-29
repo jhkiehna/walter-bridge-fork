@@ -15,7 +15,7 @@ class CallReaderTest extends TestCase
 {
     use RefreshDatabase;
 
-    public $connectionsToTransact = ['sqlite_testing', 'sqlite_testing_stats'];
+    public $connectionsToTransact = ['sqlite_testing', 'sqlite_stats_test'];
 
     public function setUp(): void
     {
@@ -26,7 +26,7 @@ class CallReaderTest extends TestCase
         for ($i = 1; $i <= 14; $i++) {
             $type = rand(0, 2);
 
-            DB::connection('sqlite_testing_stats')
+            DB::connection('sqlite_stats_test')
                 ->table('calls')
                 ->insert([
                     'user_id' => $users[$i]->intranet_id ?? 1,

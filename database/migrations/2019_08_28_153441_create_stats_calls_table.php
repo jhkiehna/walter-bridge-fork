@@ -13,8 +13,8 @@ class CreateStatsCallsTable extends Migration
      */
     public function up()
     {
-        Schema::connection('sqlite_testing_stats')->dropIfExists('calls');
-        Schema::connection('sqlite_testing_stats')->create('calls', function (Blueprint $table) {
+        Schema::connection('sqlite_stats_test')->dropIfExists('calls');
+        Schema::connection('sqlite_stats_test')->create('calls', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('user_id')->unsigned();
             $table->boolean('valid');
@@ -36,6 +36,6 @@ class CreateStatsCallsTable extends Migration
      */
     public function down()
     {
-        Schema::connection('sqlite_testing_stats')->dropIfExists('calls');
+        Schema::connection('sqlite_stats_test')->dropIfExists('calls');
     }
 }

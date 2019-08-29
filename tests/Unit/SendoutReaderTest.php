@@ -15,7 +15,7 @@ class SendoutReaderTest extends TestCase
 {
     use RefreshDatabase;
 
-    public $connectionsToTransact = ['sqlite_testing', 'walter_test'];
+    public $connectionsToTransact = ['sqlite_testing', 'sqlite_walter_test'];
 
     public function setUp(): void
     {
@@ -24,7 +24,7 @@ class SendoutReaderTest extends TestCase
         $users = User::all();
 
         for ($i = 2; $i <= 14; $i++) {
-            DB::connection('walter_test')
+            DB::connection('sqlite_walter_test')
                 ->table('SendOut')
                 ->insert([
                     'soid' => $i,

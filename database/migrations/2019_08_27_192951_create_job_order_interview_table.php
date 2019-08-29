@@ -13,8 +13,8 @@ class CreateJobOrderInterviewTable extends Migration
      */
     public function up()
     {
-        Schema::connection('walter_test')->dropIfExists('jobOrder_interview');
-        Schema::connection('walter_test')->create('jobOrder_interview', function (Blueprint $table) {
+        Schema::connection('sqlite_walter_test')->dropIfExists('jobOrder_interview');
+        Schema::connection('sqlite_walter_test')->create('jobOrder_interview', function (Blueprint $table) {
             $table->bigIncrements('intID');
             $table->dateTime('dateCreated');
             $table->integer('consultant');
@@ -28,6 +28,6 @@ class CreateJobOrderInterviewTable extends Migration
      */
     public function down()
     {
-        Schema::connection('walter_test')->dropIfExists('jobOrder_interview');
+        Schema::connection('sqlite_walter_test')->dropIfExists('jobOrder_interview');
     }
 }

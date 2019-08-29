@@ -13,8 +13,8 @@ class CreatePersonCodeDateTable extends Migration
      */
     public function up()
     {
-        Schema::connection('walter_test')->dropIfExists('person_codeDate');
-        Schema::connection('walter_test')->create('person_codeDate', function (Blueprint $table) {
+        Schema::connection('sqlite_walter_test')->dropIfExists('person_codeDate');
+        Schema::connection('sqlite_walter_test')->create('person_codeDate', function (Blueprint $table) {
             $table->bigIncrements('cdid');
             $table->dateTime('dateCoded');
             $table->integer('consultant');
@@ -28,6 +28,6 @@ class CreatePersonCodeDateTable extends Migration
      */
     public function down()
     {
-        Schema::connection('walter_test')->dropIfExists('person_codeDate');
+        Schema::connection('sqlite_walter_test')->dropIfExists('person_codeDate');
     }
 }

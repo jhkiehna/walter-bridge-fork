@@ -15,7 +15,7 @@ class CandidateCodedReaderTest extends TestCase
 {
     use RefreshDatabase;
 
-    public $connectionsToTransact = ['sqlite_testing', 'walter_test'];
+    public $connectionsToTransact = ['sqlite_testing', 'sqlite_walter_test'];
 
     public function setUp(): void
     {
@@ -24,7 +24,7 @@ class CandidateCodedReaderTest extends TestCase
         $users = User::all();
 
         for ($i = 2; $i <= 14; $i++) {
-            DB::connection('walter_test')
+            DB::connection('sqlite_walter_test')
                 ->table('person_codeDate')
                 ->insert([
                     'cdid' => $i,
