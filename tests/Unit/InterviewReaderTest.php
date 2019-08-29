@@ -5,12 +5,18 @@ namespace Tests\Unit;
 use App\User;
 use App\Interview;
 use Carbon\Carbon;
+use Tests\TestCase;
 use Illuminate\Support\Facades\DB;
-use Tests\Walter\WalterBaseTestCase;
+use Illuminate\Support\Facades\Artisan;
 use App\Services\Walter\InterviewReader;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class InterviewReaderTest extends WalterBaseTestCase
+class InterviewReaderTest extends TestCase
 {
+    use RefreshDatabase;
+
+    public $connectionsToTransact = ['sqlite_testing', 'walter_test'];
+
     public function setUp(): void
     {
         parent::setUp();
@@ -26,14 +32,11 @@ class InterviewReaderTest extends WalterBaseTestCase
                     'Consultant' => $users[$i]->walter_id ?? 1,
                 ]);
         }
-
-        DB::setDefaultConnection('sqlite_testing');
     }
 
     public function testItCanGetNewInterviews()
     {
         factory(Interview::class)->create([
-            'central_id' => 1,
             'walter_interview_id' => 1,
             'date' => Carbon::now()->subWeek(2),
         ]);
@@ -47,6 +50,10 @@ class InterviewReaderTest extends WalterBaseTestCase
 
     public function testItCanUseTheReadMethodAndCreateInterviewsInLocalDB()
     {
+        Artisan::call("db:seed", [
+            "--database" => "sqlite_testing",
+            "--env" => "testing"
+        ]);
         factory(Interview::class)->create([
             'central_id' => 1,
             'walter_interview_id' => 1,

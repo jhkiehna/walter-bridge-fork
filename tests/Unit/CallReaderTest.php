@@ -9,29 +9,19 @@ use Tests\TestCase;
 use App\Services\Stats\CallReader;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class CallReaderTest extends TestCase
 {
+    use RefreshDatabase;
+
+    public $connectionsToTransact = ['sqlite_testing', 'sqlite_testing_stats'];
+
     public function setUp(): void
     {
         parent::setUp();
 
-        Artisan::call("migrate:fresh", [
-            "--database" => "sqlite_testing",
-            "--env" => "testing"
-        ]);
-        Artisan::call("db:seed", [
-            "--database" => "sqlite_testing",
-            "--env" => "testing"
-        ]);
-
         $users = User::all();
-
-        Artisan::call("migrate:fresh", [
-            "--path" => "tests/Unit/Stats/TestStatsDBMigration",
-            "--database" => "sqlite_testing_stats",
-            "--env" => "testing"
-        ]);
 
         for ($i = 1; $i <= 14; $i++) {
             $type = rand(0, 2);
@@ -39,7 +29,7 @@ class CallReaderTest extends TestCase
             DB::connection('sqlite_testing_stats')
                 ->table('calls')
                 ->insert([
-                    'user_id' => rand(1, 200),
+                    'user_id' => $users[$i]->intranet_id ?? 1,
                     'valid' => true,
                     'dialed_number' => rand(1111111111, 9999999999),
                     'type' => $type == 0 ? 'Incoming' : $type == 1 ? 'Outgoing' : 'Transfer',
@@ -48,14 +38,11 @@ class CallReaderTest extends TestCase
                     'raw' => ''
                 ]);
         }
-
-        DB::setDefaultConnection('sqlite_testing');
     }
 
     public function testItCanGetNewCalls()
     {
         factory(Call::class)->create([
-            'central_id' => 1,
             'date' => Carbon::now()->subWeeks(2),
         ]);
 
@@ -68,6 +55,10 @@ class CallReaderTest extends TestCase
 
     public function testItCanUseTheReadMethodAndCreateCallsInLocalDB()
     {
+        Artisan::call("db:seed", [
+            "--database" => "sqlite_testing",
+            "--env" => "testing"
+        ]);
         factory(Call::class)->create([
             'central_id' => 1,
             'date' => Carbon::now()->subWeeks(2),

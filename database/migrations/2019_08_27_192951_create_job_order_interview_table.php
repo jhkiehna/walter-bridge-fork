@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreatePersonCodeDateTable extends Migration
+class CreateJobOrderInterviewTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,10 @@ class CreatePersonCodeDateTable extends Migration
      */
     public function up()
     {
-        Schema::create('person_codeDate', function (Blueprint $table) {
-            $table->bigIncrements('cdid');
-            $table->dateTime('dateCoded');
+        Schema::connection('walter_test')->dropIfExists('jobOrder_interview');
+        Schema::connection('walter_test')->create('jobOrder_interview', function (Blueprint $table) {
+            $table->bigIncrements('intID');
+            $table->dateTime('dateCreated');
             $table->integer('consultant');
         });
     }
@@ -27,6 +28,6 @@ class CreatePersonCodeDateTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('person_codeDate');
+        Schema::connection('walter_test')->dropIfExists('jobOrder_interview');
     }
 }

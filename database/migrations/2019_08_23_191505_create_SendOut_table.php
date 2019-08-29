@@ -13,7 +13,8 @@ class CreateSendOutTable extends Migration
      */
     public function up()
     {
-        Schema::create('SendOut', function (Blueprint $table) {
+        Schema::connection('walter_test')->dropIfExists('SendOut');
+        Schema::connection('walter_test')->create('SendOut', function (Blueprint $table) {
             $table->bigIncrements('soid');
             $table->dateTime('DateSent');
             $table->integer('Consultant');
@@ -28,6 +29,6 @@ class CreateSendOutTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('SendOut');
+        Schema::connection('walter_test')->dropIfExists('SendOut');
     }
 }

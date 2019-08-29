@@ -5,12 +5,18 @@ namespace Tests\Unit;
 use App\User;
 use App\Sendout;
 use Carbon\Carbon;
+use Tests\TestCase;
 use Illuminate\Support\Facades\DB;
-use Tests\Walter\WalterBaseTestCase;
 use App\Services\Walter\SendoutReader;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class SendoutReaderTest extends WalterBaseTestCase
+class SendoutReaderTest extends TestCase
 {
+    use RefreshDatabase;
+
+    public $connectionsToTransact = ['sqlite_testing', 'walter_test'];
+
     public function setUp(): void
     {
         parent::setUp();
@@ -27,14 +33,11 @@ class SendoutReaderTest extends WalterBaseTestCase
                     'firstResume' => true
                 ]);
         }
-
-        DB::setDefaultConnection('sqlite_testing');
     }
 
     public function testItCanGetNewSendouts()
     {
         factory(Sendout::class)->create([
-            'central_id' => 1,
             'date' => Carbon::now()->subWeek(2),
         ]);
 
@@ -47,6 +50,10 @@ class SendoutReaderTest extends WalterBaseTestCase
 
     public function testItCanUseTheReadMethodAndCreateSendoutsInLocalDB()
     {
+        Artisan::call("db:seed", [
+            "--database" => "sqlite_testing",
+            "--env" => "testing"
+        ]);
         factory(Sendout::class)->create([
             'central_id' => 1,
             'date' => Carbon::now()->subWeek(2),

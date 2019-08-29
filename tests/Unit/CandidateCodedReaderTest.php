@@ -4,13 +4,19 @@ namespace Tests\Unit;
 
 use App\User;
 use Carbon\Carbon;
+use Tests\TestCase;
 use App\CandidateCoded;
 use Illuminate\Support\Facades\DB;
-use Tests\Walter\WalterBaseTestCase;
+use Illuminate\Support\Facades\Artisan;
 use App\Services\Walter\CandidateCodedReader;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class CandidateCodedReaderTest extends WalterBaseTestCase
+class CandidateCodedReaderTest extends TestCase
 {
+    use RefreshDatabase;
+
+    public $connectionsToTransact = ['sqlite_testing', 'walter_test'];
+
     public function setUp(): void
     {
         parent::setUp();
@@ -26,14 +32,11 @@ class CandidateCodedReaderTest extends WalterBaseTestCase
                     'consultant' => $users[$i]->walter_id ?? 1,
                 ]);
         }
-
-        DB::setDefaultConnection('sqlite_testing');
     }
 
     public function testItCanGetNewCandidatesCoded()
     {
         factory(CandidateCoded::class)->create([
-            'central_id' => 1,
             'walter_coded_id' => 1,
             'date' => Carbon::now()->subWeek(2),
         ]);
@@ -47,6 +50,10 @@ class CandidateCodedReaderTest extends WalterBaseTestCase
 
     public function testItCanUseTheReadMethodAndCreateCandidatesCodedInLocalDB()
     {
+        Artisan::call("db:seed", [
+            "--database" => "sqlite_testing",
+            "--env" => "testing"
+        ]);
         factory(CandidateCoded::class)->create([
             'central_id' => 1,
             'walter_coded_id' => 1,

@@ -27,6 +27,7 @@ class Kernel extends ConsoleKernel
         $schedule->call('App\Services\Walter\SendoutReader@read')->everyMinute();
         $schedule->call('App\Services\Walter\InterviewReader@read')->everyMinute();
         $schedule->call('App\Services\Walter\CandidateCodedReader@read')->everyMinute();
+        $schedule->call('App\Services\Walter\CallReader@read')->everyMinute();
     }
 
     /**
