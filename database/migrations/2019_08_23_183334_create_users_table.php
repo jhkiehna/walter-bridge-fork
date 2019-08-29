@@ -19,7 +19,6 @@ class CreateUsersTable extends Migration
             $table->bigInteger('walter_id')->unsigned()->unique()->nullable()->default(null);
             $table->bigInteger('intranet_id')->unsigned()->unique()->nullable()->default(null);
             $table->string('email')->unique()->nullable()->default(null);
-            //Do we need the extension from walter?
 
             $table->timestamps();
             $table->softDeletes();
