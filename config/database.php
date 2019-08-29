@@ -132,7 +132,7 @@ return [
             'prefix_indexes' => true,
         ],
 
-        'walter_sqlsrv' => [
+        'sqlsrv_walter' => [
             'driver' => 'sqlsrv',
             'host' => env('DB_WALTER_HOST', 'localhost'),
             'port' => env('DB_WALTER_PORT', '1433'),

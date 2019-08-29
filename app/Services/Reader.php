@@ -21,7 +21,7 @@ abstract class Reader
 
     public function __construct()
     {
-        $this->walterDriver = env('APP_ENV') == 'production' ? 'walter_sqlsrv' : 'sqlite_walter_test';
+        $this->walterDriver = env('APP_ENV') == 'production' ? 'sqlsrv_walter' : 'sqlite_walter_test';
         $this->statsDriver = env('APP_ENV') == 'production' ? 'mysql_stats' : 'sqlite_stats_test';
         $this->userModel = new User;
         $this->sendoutModel = new Sendout;
