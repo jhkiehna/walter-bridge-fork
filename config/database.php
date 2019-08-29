@@ -45,8 +45,21 @@ return [
 
         'sqlite_testing' => [
             'driver' => 'sqlite',
-            'url' => env('DATABASE_URL'),
             'database' => database_path('testing.sqlite'),
+            'prefix' => '',
+            'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
+        ],
+
+        'sqlite_walter_test' => [
+            'driver' => 'sqlite',
+            'database' => database_path('walter-testing.sqlite'),
+            'prefix' => '',
+            'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
+        ],
+
+        'sqlite_stats_test' => [
+            'driver' => 'sqlite',
+            'database' => database_path('testing-stats.sqlite'),
             'prefix' => '',
             'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
         ],
@@ -59,6 +72,26 @@ return [
             'database' => env('DB_DATABASE', 'forge'),
             'username' => env('DB_USERNAME', 'forge'),
             'password' => env('DB_PASSWORD', ''),
+            'unix_socket' => env('DB_SOCKET', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ],
+
+        'mysql_stats' => [
+            'driver' => 'mysql',
+            'url' => env('DATABASE_URL'),
+            'host' => env('DB_STATS_HOST', '127.0.0.1'),
+            'port' => env('DB_STATS_PORT', '3306'),
+            'database' => env('DB_STATS_DATABASE', 'forge'),
+            'username' => env('DB_STATS_USERNAME', 'forge'),
+            'password' => env('DB_STATS_PASSWORD', ''),
             'unix_socket' => env('DB_SOCKET', ''),
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
@@ -97,6 +130,17 @@ return [
             'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,
+        ],
+
+        'sqlsrv_walter' => [
+            'driver' => 'sqlsrv',
+            'host' => env('DB_WALTER_HOST', 'localhost'),
+            'port' => env('DB_WALTER_PORT', '1433'),
+            'database' => env('DB_WALTER_DATABASE', database_path('walter-testing.sqlite')),
+            'username' => env('DB_WALTER_USERNAME', 'forge'),
+            'password' => env('DB_WALTER_PASSWORD', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
         ],
 
     ],

@@ -3,6 +3,8 @@
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
 use App\User;
+use Carbon\Carbon;
+use App\CandidateCoded;
 use Faker\Generator as Faker;
 
 /*
@@ -16,9 +18,13 @@ use Faker\Generator as Faker;
 |
 */
 
-$factory->define(User::class, function (Faker $faker) {
+$factory->define(CandidateCoded::class, function (Faker $faker) {
     return [
-        'walter_id' => $faker->randomNumber(),
-        'central_id' => $faker->randomNumber(),
+        'central_id' => function () {
+            return factory(User::class)->create()->central_id;
+        },
+        'walter_consultant_id' => rand(1, 100),
+        'walter_coded_id' => rand(1, 100),
+        'date' => Carbon::now()
     ];
 });
