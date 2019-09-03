@@ -27,4 +27,31 @@ class Call extends Model
     {
         return $this->morphMany(FailedItem::class, 'failable');
     }
+
+    public static function writeWithForeignRecord($call)
+    {
+        $centralId = self::translateIntranetUserIdToCentralUserId($call->user_id);
+
+        $localCall = self::create([
+            'central_id' => $centralId ?? 1,
+            'intranet_user_id' => $call->user_id,
+            'stats_call_id' => $call->id,
+            'valid' => $call->valid,
+            'dialed_number' => $call->dialed_number,
+            'type' => $call->type,
+            'date' => $call->date,
+            'duration' => $call->duration,
+        ]);
+
+        if (!$centralId) {
+            FailedItem::make()->failable()->associate($localCall)->save();
+        }
+    }
+
+    protected static function translateIntranetUserIdToCentralUserId($intranetId)
+    {
+        $user = User::where('intranet_id', $intranetId)->first();
+
+        return $user ? $user->central_id : null;
+    }
 }

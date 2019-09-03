@@ -28,4 +28,27 @@ class CandidateCoded extends Model
     {
         return $this->morphMany(FailedItem::class, 'failable');
     }
+
+    public static function writeWithForeignRecord($candidateCoded)
+    {
+        $centralId = self::translateWalterUserIdToCentralUserId($candidateCoded->consultant);
+
+        $localCandidateCoded = self::create([
+            'central_id' => $centralId ?? 1,
+            'walter_consultant_id' => (int) $candidateCoded->consultant,
+            'walter_coded_id' => $candidateCoded->id,
+            'date' => $candidateCoded->date
+        ]);
+
+        if (!$centralId) {
+            FailedItem::make()->failable()->associate($localCandidateCoded)->save();
+        }
+    }
+
+    protected static function translateWalterUserIdToCentralUserId($consultantId)
+    {
+        $user = User::where('walter_id', $consultantId)->first();
+
+        return $user ? $user->central_id : null;
+    }
 }

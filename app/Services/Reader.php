@@ -2,45 +2,29 @@
 
 namespace App\Services;
 
-use App\Call;
-use App\User;
-use App\Sendout;
-use App\Interview;
-use App\CandidateCoded;
+use Illuminate\Support\Facades\App;
 
 abstract class Reader
 {
     protected $walterDriver;
     protected $statsDriver;
 
-    private $userModel;
-    protected $sendoutModel;
-    protected $interviewModel;
-    protected $candidateCodedModel;
-    protected $callModel;
+    public $localModel;
 
     public function __construct()
     {
-        $this->walterDriver = env('APP_ENV') == 'production' ? 'sqlsrv_walter' : 'sqlite_walter_test';
-        $this->statsDriver = env('APP_ENV') == 'production' ? 'mysql_stats' : 'sqlite_stats_test';
-        $this->userModel = new User;
-        $this->sendoutModel = new Sendout;
-        $this->interviewModel = new Interview;
-        $this->candidateCodedModel = new CandidateCoded;
-        $this->callModel = new Call;
+        $this->walterDriver = App::environment() == 'production' ? 'sqlsrv_walter' : 'sqlite_walter_test';
+        $this->statsDriver = App::environment() == 'production' ? 'mysql_stats' : 'sqlite_stats_test';
     }
 
-    protected function translateWalterUserIdToCentralUserId($consultantId)
+    public function read()
     {
-        $user = $this->userModel->where('walter_id', $consultantId)->first();
+        $records = $this->getNewRecords();
 
-        return $user ? $user->central_id : null;
-    }
-
-    protected function translateIntranetUserIdToCentralUserId($intranetId)
-    {
-        $user = $this->userModel->where('intranet_id', $intranetId)->first();
-
-        return $user ? $user->central_id : null;
+        if (!$records->isEmpty()) {
+            $records->each(function ($record) {
+                $this->localModel::writeWithForeignRecord($record);
+            });
+        }
     }
 }

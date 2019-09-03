@@ -2,50 +2,56 @@
 
 namespace App\Services\Walter;
 
-use App\FailedItem;
+use Carbon\Carbon;
+use App\Interview;
 use App\Services\Reader;
 use Illuminate\Support\Facades\DB;
 
 class InterviewReader extends Reader
 {
-    public function read()
+    public function __construct()
     {
-        $interviews = $this->getNewInterviews();
+        parent::__construct();
 
-        if (!$interviews->isEmpty()) {
-            $interviews->each(function ($interview) {
-                $centralId = $this->translateWalterUserIdToCentralUserId($interview->consultant);
-
-                $localInterview = $this->interviewModel->create([
-                    'central_id' => $centralId ?? 1,
-                    'walter_consultant_id' => (int) $interview->consultant,
-                    'walter_interview_id' => $interview->id,
-                    'date' => $interview->date
-                ]);
-
-                if (!$centralId) {
-                    FailedItem::make()->failable()->associate($localInterview)->save();
-                }
-            });
-        }
+        $this->localModel = new Interview;
     }
 
-    public function getNewInterviews()
+    public function getNewRecords()
     {
-        $latestInterview = $this->interviewModel->orderBy('walter_interview_id', 'desc')->first();
+        $latestInterview = $this->localModel::orderBy('walter_interview_id', 'desc')->first();
 
         if ($latestInterview) {
             return collect(
-                DB::connection($this->walterDriver)
-                    ->table('jobOrder_interview')
-                    ->select([
-                        'intID as id',
-                        'dateCreated as date',
-                        'consultant'
-                    ])
+                $this->getQuery()
                     ->where('intID', '>', $latestInterview->walter_interview_id)
                     ->get()
             );
         }
+    }
+
+    public function getAll()
+    {
+        return collect($this->getQuery()->get());
+    }
+
+    public function getBetween(Carbon $startDate, Carbon $endDate)
+    {
+        return collect(
+            $this->getQuery()
+                ->where('dateCreated', '>=', $startDate)
+                ->where('dateCreated', '<=', $endDate)
+                ->get()
+        );
+    }
+
+    private function getQuery()
+    {
+        return DB::connection($this->walterDriver)
+            ->table('jobOrder_interview')
+            ->select([
+                'intID as id',
+                'dateCreated as date',
+                'consultant'
+            ]);
     }
 }

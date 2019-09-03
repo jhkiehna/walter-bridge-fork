@@ -136,7 +136,7 @@ return [
             'driver' => 'sqlsrv',
             'host' => env('DB_WALTER_HOST', 'localhost'),
             'port' => env('DB_WALTER_PORT', '1433'),
-            'database' => env('DB_WALTER_DATABASE', database_path('walter-testing.sqlite')),
+            'database' => env('DB_WALTER_DATABASE'),
             'username' => env('DB_WALTER_USERNAME', 'forge'),
             'password' => env('DB_WALTER_PASSWORD', ''),
             'charset' => 'utf8',

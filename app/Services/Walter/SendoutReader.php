@@ -2,56 +2,61 @@
 
 namespace App\Services\Walter;
 
+use App\Sendout;
 use Carbon\Carbon;
-use App\FailedItem;
 use App\Services\Reader;
 use Illuminate\Support\Facades\DB;
 
 class SendoutReader extends Reader
 {
-    public function read()
+    public function __construct()
     {
-        $sendouts = $this->getNewSendouts();
+        parent::__construct();
 
-        if (!$sendouts->isEmpty()) {
-            $sendouts->each(function ($sendout) {
-                $centralId = $this->translateWalterUserIdToCentralUserId($sendout->consultant);
-
-                $localSendout = $this->sendoutModel->create([
-                    'central_id' => $centralId ?? 1,
-                    'walter_consultant_id' => (int) $sendout->consultant,
-                    'walter_sendout_id' => $sendout->id,
-                    'date' => $sendout->date
-                ]);
-
-                if (!$centralId) {
-                    FailedItem::make()->failable()->associate($localSendout)->save();
-                }
-            });
-        }
+        $this->localModel = new Sendout;
     }
 
-    public function getNewSendouts()
+    public function getNewRecords()
     {
-        $latestSendout = $this->sendoutModel->orderBy('date', 'desc')->first();
+        $latestSendout = $this->localModel::orderBy('date', 'desc')->first();
 
         if ($latestSendout) {
             $lastReadDate = Carbon::parse($latestSendout->date);
 
             return collect(
-                DB::connection($this->walterDriver)
-                    ->table('SendOut')
-                    ->select([
-                        'soid as id',
-                        'dateSent as date',
-                        'Consultant as consultant',
-                        'firstResume'
-                    ])
-                    ->where('firstResume', 1)
-                    ->whereNotNull('dateSent')
+                $this->getQuery()
                     ->where('dateSent', '>', $lastReadDate)
                     ->get()
             );
         }
+    }
+
+    public function getAll()
+    {
+        return collect($this->getQuery()->get());
+    }
+
+    public function getBetween(Carbon $startDate, Carbon $endDate)
+    {
+        return collect(
+            $this->getQuery()
+                ->where('dateSent', '>=', $startDate)
+                ->where('dateSent', '<=', $endDate)
+                ->get()
+        );
+    }
+
+    private function getQuery()
+    {
+        return DB::connection($this->walterDriver)
+            ->table('SendOut')
+            ->select([
+                'soid as id',
+                'dateSent as date',
+                'Consultant as consultant',
+                'firstResume'
+            ])
+            ->where('firstResume', 1)
+            ->whereNotNull('dateSent');
     }
 }

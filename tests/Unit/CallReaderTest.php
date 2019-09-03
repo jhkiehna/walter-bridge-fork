@@ -46,7 +46,7 @@ class CallReaderTest extends TestCase
             'date' => Carbon::now()->subWeeks(2),
         ]);
 
-        $calls = (new CallReader)->getNewCalls();
+        $calls = (new CallReader)->getNewRecords();
 
         $this->assertFalse($calls->isEmpty());
         $this->assertEquals($calls->first()->raw, '');
