@@ -16,6 +16,8 @@ class User extends Model
     protected $fillable = [
         'central_id',
         'walter_id',
+        'intranet_id',
+        'email'
     ];
 
     public function interviews()
