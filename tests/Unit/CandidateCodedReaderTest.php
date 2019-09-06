@@ -41,7 +41,7 @@ class CandidateCodedReaderTest extends TestCase
             'date' => Carbon::now()->subWeek(2),
         ]);
 
-        $candidatesCoded = (new CandidateCodedReader)->getNewCandidatesCoded();
+        $candidatesCoded = (new CandidateCodedReader)->getNewRecords();
 
         $this->assertFalse($candidatesCoded->isEmpty());
         $this->assertEquals($candidatesCoded->first()->id, 2);

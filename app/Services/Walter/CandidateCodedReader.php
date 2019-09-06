@@ -2,50 +2,56 @@
 
 namespace App\Services\Walter;
 
-use App\FailedItem;
+use Carbon\Carbon;
+use App\CandidateCoded;
 use App\Services\Reader;
 use Illuminate\Support\Facades\DB;
 
 class CandidateCodedReader extends Reader
 {
-    public function read()
+    public function __construct()
     {
-        $candidatesCoded = $this->getNewCandidatesCoded();
+        parent::__construct();
 
-        if (!$candidatesCoded->isEmpty()) {
-            $candidatesCoded->each(function ($candidateCoded) {
-                $centralId = $this->translateWalterUserIdToCentralUserId($candidateCoded->consultant);
-
-                $localCandidateCoded = $this->candidateCodedModel->create([
-                    'central_id' => $centralId ?? 1,
-                    'walter_consultant_id' => (int) $candidateCoded->consultant,
-                    'walter_coded_id' => $candidateCoded->id,
-                    'date' => $candidateCoded->date
-                ]);
-
-                if (!$centralId) {
-                    FailedItem::make()->failable()->associate($localCandidateCoded)->save();
-                }
-            });
-        }
+        $this->localModel = new CandidateCoded;
     }
 
-    public function getNewCandidatesCoded()
+    public function getNewRecords()
     {
-        $latestCandidateCoded = $this->candidateCodedModel->orderBy('walter_coded_id', 'desc')->first();
+        $latestCandidateCoded = $this->localModel::orderBy('walter_coded_id', 'desc')->first();
 
         if ($latestCandidateCoded) {
             return collect(
-                DB::connection($this->walterDriver)
-                    ->table('person_codeDate')
-                    ->select([
-                        'cdid as id',
-                        'dateCoded as date',
-                        'consultant'
-                    ])
+                $this->getQuery()
                     ->where('cdid', '>', $latestCandidateCoded->walter_coded_id)
                     ->get()
             );
         }
+    }
+
+    public function getAll()
+    {
+        return collect($this->getQuery()->get());
+    }
+
+    public function getBetween(Carbon $startDate, Carbon $endDate)
+    {
+        return collect(
+            $this->getQuery()
+                ->where('dateCoded', '>=', $startDate)
+                ->where('dateCoded', '<=', $endDate)
+                ->get()
+        );
+    }
+
+    private function getQuery()
+    {
+        return DB::connection($this->walterDriver)
+            ->table('person_codeDate')
+            ->select([
+                'cdid as id',
+                'dateCoded as date',
+                'consultant'
+            ]);
     }
 }

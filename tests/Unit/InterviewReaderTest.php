@@ -41,7 +41,7 @@ class InterviewReaderTest extends TestCase
             'date' => Carbon::now()->subWeek(2),
         ]);
 
-        $interviews = (new InterviewReader)->getNewInterviews();
+        $interviews = (new InterviewReader)->getNewRecords();
 
         $this->assertFalse($interviews->isEmpty());
         $this->assertEquals($interviews->first()->id, 2);

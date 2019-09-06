@@ -41,7 +41,7 @@ class SendoutReaderTest extends TestCase
             'date' => Carbon::now()->subWeek(2),
         ]);
 
-        $sendouts = (new SendoutReader)->getNewSendouts();
+        $sendouts = (new SendoutReader)->getNewRecords();
 
         $this->assertFalse($sendouts->isEmpty());
         $this->assertEquals($sendouts->first()->id, 2);
