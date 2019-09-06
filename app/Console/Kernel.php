@@ -5,6 +5,7 @@ namespace App\Console;
 use App\Console\Commands\FetchCalls;
 use App\Console\Commands\FetchSendouts;
 use App\Console\Commands\FetchInterviews;
+use App\Console\Commands\KafkaConsume;
 use Illuminate\Console\Scheduling\Schedule;
 use App\Console\Commands\FetchCandidatesCoded;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -21,12 +22,13 @@ class Kernel extends ConsoleKernel
         FetchSendouts::class,
         FetchCalls::class,
         FetchCandidatesCoded::class,
+        KafkaConsume::class
     ];
 
     /**
      * Define the application's command schedule.
      *
-     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
+     * @param  \Illuminate\Console\Scheduling\Schedule $schedule
      * @return void
      */
     protected function schedule(Schedule $schedule)
@@ -46,6 +48,6 @@ class Kernel extends ConsoleKernel
     {
         $this->load(__DIR__ . '/Commands');
 
-        require base_path('routes/console.php');
+        include base_path('routes/console.php');
     }
 }

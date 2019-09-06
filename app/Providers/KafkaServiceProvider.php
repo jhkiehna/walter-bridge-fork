@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use App\Services\KafkaProducer;
+use App\Services\KafkaConsumer;
 
 class KafkaServiceProvider extends ServiceProvider
 {
@@ -60,8 +61,10 @@ class KafkaServiceProvider extends ServiceProvider
                 $config->setSslEnableAuthentication(false);
                 $config->setSslCafile(config('kafka.ca_file'));
                 $config->setTimeout(6000);
+                $config->setGroupId("walter-bridge");
 
                 $config->setTopics(config('kafka.topics'));
+                $config->setOffsetReset("latest");
 
                 $consumer = new \Kafka\Consumer();
 

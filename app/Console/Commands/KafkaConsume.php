@@ -3,8 +3,9 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use App\Services\KafkaConsumer;
 
-class KafkaConsumer extends Command
+class KafkaConsume extends Command
 {
     /**
      * The name and signature of the console command.
