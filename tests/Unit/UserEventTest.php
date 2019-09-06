@@ -15,13 +15,13 @@ class UserEventTest extends TestCase
     {
         $fakeMessage = json_encode(
             [
-            'type' => 'create_user',
-            'user' => [
-                'origin_id' => 10,
-                'email' => 'fake_user@kimmel.com',
-                'walter_id' => 15,
-                'intranet_id' => 19
-            ]
+                'type' => 'create_user',
+                'user' => [
+                    'origin_id' => 10,
+                    'email' => 'fake_user@kimmel.com',
+                    'walter_id' => 15,
+                    'intranet_id' => 19
+                ]
             ]
         );
 
@@ -59,7 +59,8 @@ class UserEventTest extends TestCase
             ]
         );
 
-        $fakeMessage = [
+        $fakeMessage = json_encode(
+            [
             'type' => 'create_user',
             'user' => [
                 'origin_id' => 10,
@@ -67,9 +68,10 @@ class UserEventTest extends TestCase
                 'walter_id' => 15,
                 'intranet_id' => 19
             ]
-        ];
+            ]
+        );
 
-        (new UserEvent($fakeMessage))->process();
+        (new UserEvent(json_decode($fakeMessage)))->process();
 
         $this->assertDatabaseHas(
             'users',
