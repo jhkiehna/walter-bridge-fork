@@ -29,13 +29,13 @@ class UserEvent
      */
     public function process()
     {
-        $data = $this->message['user'];
+        $data = $this->message->user;
 
-        $user = User::firstOrNew([ 'central_id' => $data["origin_id"]]);
+        $user = User::firstOrNew([ 'central_id' => $data->origin_id]);
 
-        $user->email = $data["email"];
-        $user->walter_id = $data["walter_id"];
-        $user->intranet_id = $data["intranet_id"];
+        $user->email = $data->email;
+        $user->walter_id = $data->walter_id;
+        $user->intranet_id = $data->intranet_id;
 
         $user->save();
     }

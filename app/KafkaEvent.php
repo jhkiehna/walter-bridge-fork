@@ -37,15 +37,17 @@ class KafkaEvent
     public function process()
     {
         // we are only currently interested in the expected topics
-        if (in_array($this->topic, config("kafka.topics"))) {
-            return;
+        if (!in_array($this->topic, config("kafka.topics"))) {
+            return false;
         }
 
         switch ($this->message->type) {
         case 'user_created':
         case 'user_updated':
-            (new UserEvent($this->message)).process();
+            (new UserEvent($this->message))->process();
             break;
         }
+
+        return true;
     }
 }
