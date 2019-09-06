@@ -21,21 +21,11 @@ class KafkaServiceProvider extends ServiceProvider
                 $config = \Kafka\ProducerConfig::getInstance();
                 $config->setMetadataRefreshIntervalMs(10000);
 
-                $config->setMetadataBrokerList($this->brokers());
-                $config->setBrokerVersion(config("kafka.broker_version"));
+                $this->setConfigConnection($config);
+
+                $config->setClientId(config('kafka.client_id'));
                 $config->setRequiredAck(1);
                 $config->setIsAsync(false);
-                $config->setClientId(config('kafka.client_id'));
-
-                $config->setSecurityProtocol(\Kafka\Config::SECURITY_PROTOCOL_SASL_SSL);
-                $config->setSaslMechanism(\Kafka\Config::SASL_MECHANISMS_PLAIN);
-                $config->setSaslUsername(config('kafka.sasl.username'));
-                $config->setSaslPassword(config('kafka.sasl.password'));
-
-                $config->setSslEnable(true);
-                $config->setSslEnableAuthentication(false);
-                $config->setSslCafile(config('kafka.ca_file'));
-                $config->setTimeout(6000);
 
                 $producer = new \Kafka\Producer();
 
@@ -47,22 +37,10 @@ class KafkaServiceProvider extends ServiceProvider
             KafkaConsumer::class,
             function ($app) {
                 $config = \Kafka\ConsumerConfig::getInstance();
-                $config->setMetadataRefreshIntervalMs(10000);
 
-                $config->setMetadataBrokerList($this->brokers());
-                $config->setBrokerVersion(config("kafka.broker_version"));
+                $this->setConfigConnection($config);
 
-                $config->setSecurityProtocol(\Kafka\Config::SECURITY_PROTOCOL_SASL_SSL);
-                $config->setSaslMechanism(\Kafka\Config::SASL_MECHANISMS_PLAIN);
-                $config->setSaslUsername(config('kafka.sasl.username'));
-                $config->setSaslPassword(config('kafka.sasl.password'));
-
-                $config->setSslEnable(true);
-                $config->setSslEnableAuthentication(false);
-                $config->setSslCafile(config('kafka.ca_file'));
-                $config->setTimeout(6000);
                 $config->setGroupId("walter-bridge");
-
                 $config->setTopics(config('kafka.topics'));
                 $config->setOffsetReset("latest");
 
@@ -86,6 +64,23 @@ class KafkaServiceProvider extends ServiceProvider
     public function provides()
     {
         return [KafkaProducer::class, KafkaConsumer::class];
+    }
+
+    protected function setConfigConnection($config)
+    {
+        $config->setMetadataBrokerList($this->brokers());
+        $config->setMetadataRefreshIntervalMs(10000);
+        $config->setBrokerVersion(config("kafka.broker_version"));
+
+        $config->setSecurityProtocol(\Kafka\Config::SECURITY_PROTOCOL_SASL_SSL);
+        $config->setSaslMechanism(\Kafka\Config::SASL_MECHANISMS_PLAIN);
+        $config->setSaslUsername(config('kafka.sasl.username'));
+        $config->setSaslPassword(config('kafka.sasl.password'));
+
+        $config->setSslEnable(true);
+        $config->setSslEnableAuthentication(false);
+        $config->setSslCafile(config('kafka.ca_file'));
+        $config->setTimeout(6000);
     }
 
     /**
