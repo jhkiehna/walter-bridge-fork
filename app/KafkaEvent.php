@@ -24,7 +24,7 @@ class KafkaEvent
         $this->message = json_decode($message);
 
         if (is_null($this->message)) {
-            throw Exception("Failed to decode message.");
+            throw new \Exception("Failed to decode message.");
         }
     }
 

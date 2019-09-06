@@ -12,6 +12,15 @@ class KafkaEventTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function testItThrowsExceptionWithBadMessage()
+    {
+        $this->expectException(\Exception::class);
+
+        Config::set("kafka.topics", ['user']);
+
+        (new KafkaEvent('user', "{/This'': } is a bad message'}"))->process();
+    }
+
     public function testItReturnsFalseForUnspecifiedTopics()
     {
         Config::set("kafka.topics", ['test']);
