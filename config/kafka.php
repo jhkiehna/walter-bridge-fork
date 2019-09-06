@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'broker_version' => env("KAFKA_BROKER_VERSION", "0.10.0.0"),
+
     'client_id' => 'walter-bridge',
 
     'brokers' => [
@@ -13,4 +15,6 @@ return [
     ],
 
     'ca_file' => env('SSL_CA_FILE', '/etc/ssl/cert.pem'),
+
+    'topics' => ['user']
 ];
