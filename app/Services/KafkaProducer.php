@@ -2,11 +2,13 @@
 
 namespace App\Services;
 
+use Kafka\Producer;
+
 class KafkaProducer
 {
     protected $producer;
 
-    public function __construct($producer)
+    public function __construct(Producer $producer)
     {
         $this->producer = $producer;
     }
