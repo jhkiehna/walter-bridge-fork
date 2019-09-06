@@ -4,7 +4,7 @@ namespace Tests\Unit\Services;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class KafkaProducerTest extends \Tests\TestCase
+class KafkaConsumerTest extends \Tests\TestCase
 {
     //use RefreshDatabase;
 
@@ -12,8 +12,6 @@ class KafkaProducerTest extends \Tests\TestCase
     {
         $this->markTestSkipped("This isn't really needed unless nmred/kafka-php changes.");
 
-        $producer = app(\App\Services\KafkaProducer::class);
-
-        $producer->publish("testing", "message");
+        $producer = app(\App\Services\KafkaConsumer::class);
     }
 }
