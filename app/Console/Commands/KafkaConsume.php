@@ -51,7 +51,7 @@ class KafkaConsume extends Command
     {
         $this->consumer->start(
             function ($topic, $partition, $message) {
-                (new KafkaEvent($topic, $message)).process();
+                (new KafkaEvent($topic, $message))->process();
             }
         );
     }
