@@ -8,6 +8,7 @@ use App\Console\Commands\FetchInterviews;
 use Illuminate\Console\Scheduling\Schedule;
 use App\Console\Commands\FetchCandidatesCoded;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use App\Console\Commands\KafkaConsume;
 
 class Kernel extends ConsoleKernel
 {
@@ -21,6 +22,7 @@ class Kernel extends ConsoleKernel
         FetchSendouts::class,
         FetchCalls::class,
         FetchCandidatesCoded::class,
+        KafkaConsume::class
     ];
 
     /**
