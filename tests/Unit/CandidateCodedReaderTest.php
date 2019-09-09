@@ -23,13 +23,14 @@ class CandidateCodedReaderTest extends TestCase
 
         $users = User::all();
 
-        for ($i = 2; $i <= 14; $i++) {
+        for ($i = 1; $i <= 14; $i++) {
             DB::connection('sqlite_walter_test')
                 ->table('person_codeDate')
                 ->insert([
                     'cdid' => $i,
                     'DateCoded' => Carbon::now()->subDays($i),
                     'consultant' => $users[$i]->walter_id ?? 1,
+                    'updated_at' => Carbon::now()->subDays($i)
                 ]);
         }
     }
@@ -38,13 +39,13 @@ class CandidateCodedReaderTest extends TestCase
     {
         factory(CandidateCoded::class)->create([
             'walter_coded_id' => 1,
-            'date' => Carbon::now()->subWeek(2),
+            'updated_at' => Carbon::now()->subWeeks(3),
         ]);
 
         $candidatesCoded = (new CandidateCodedReader)->getNewRecords();
 
         $this->assertFalse($candidatesCoded->isEmpty());
-        $this->assertEquals($candidatesCoded->first()->id, 2);
+        $this->assertEquals($candidatesCoded->first()->id, 1);
         $this->assertObjectHasAttribute('consultant', $candidatesCoded->first());
     }
 

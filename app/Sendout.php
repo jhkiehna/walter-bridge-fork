@@ -4,12 +4,14 @@ namespace App;
 
 use App\User;
 use App\FailedItem;
+use App\WalterRecordTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Sendout extends Model
 {
     use SoftDeletes;
+    use WalterRecordTrait;
 
     protected $fillable = [
         'central_id',
@@ -32,22 +34,18 @@ class Sendout extends Model
     {
         $centralId = self::translateWalterUserIdToCentralUserId($sendout->consultant);
 
-        $localSendout = self::create([
-            'central_id' => $centralId ?? 1,
-            'walter_consultant_id' => (int) $sendout->consultant,
-            'walter_sendout_id' => $sendout->id,
-            'date' => $sendout->date
-        ]);
+        $localSendout = self::updateOrCreate(
+            ['walter_sendout_id' => $sendout->id],
+            [
+                'central_id' => $centralId ?? 1,
+                'walter_consultant_id' => (int) $sendout->consultant,
+                'date' => $sendout->date,
+                'updated_at' => $sendout->updated_at
+            ]
+        );
 
         if (!$centralId) {
             FailedItem::make()->failable()->associate($localSendout)->save();
         }
-    }
-
-    protected static function translateWalterUserIdToCentralUserId($consultantId)
-    {
-        $user = User::where('walter_id', $consultantId)->first();
-
-        return $user ? $user->central_id : null;
     }
 }

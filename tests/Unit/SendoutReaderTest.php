@@ -23,14 +23,15 @@ class SendoutReaderTest extends TestCase
 
         $users = User::all();
 
-        for ($i = 2; $i <= 14; $i++) {
+        for ($i = 1; $i <= 14; $i++) {
             DB::connection('sqlite_walter_test')
                 ->table('SendOut')
                 ->insert([
                     'soid' => $i,
                     'DateSent' => Carbon::now()->subDays($i),
                     'Consultant' => $users[$i]->walter_id ?? 1,
-                    'firstResume' => true
+                    'firstResume' => true,
+                    'updated_at' => Carbon::now()->subDays($i)
                 ]);
         }
     }
@@ -38,13 +39,14 @@ class SendoutReaderTest extends TestCase
     public function testItCanGetNewSendouts()
     {
         factory(Sendout::class)->create([
-            'date' => Carbon::now()->subWeek(2),
+            'walter_sendout_id' => 1,
+            'updated_at' => Carbon::now()->subWeeks(3)
         ]);
 
         $sendouts = (new SendoutReader)->getNewRecords();
 
         $this->assertFalse($sendouts->isEmpty());
-        $this->assertEquals($sendouts->first()->id, 2);
+        $this->assertEquals($sendouts->first()->id, 1);
         $this->assertObjectHasAttribute('consultant', $sendouts->first());
     }
 

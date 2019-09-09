@@ -18,6 +18,8 @@ class CreateJobOrderInterviewTable extends Migration
             $table->bigIncrements('intID');
             $table->dateTime('dateCreated');
             $table->integer('consultant');
+
+            $table->timestamps();
         });
     }
 

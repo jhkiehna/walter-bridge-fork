@@ -3,6 +3,7 @@
 namespace App\Console;
 
 use App\Console\Commands\FetchCalls;
+use App\Console\Commands\RetryFailed;
 use App\Console\Commands\FetchSendouts;
 use App\Console\Commands\FetchInterviews;
 use Illuminate\Console\Scheduling\Schedule;
@@ -22,6 +23,7 @@ class Kernel extends ConsoleKernel
         FetchSendouts::class,
         FetchCalls::class,
         FetchCandidatesCoded::class,
+        RetryFailed::class,
         KafkaConsume::class
     ];
 

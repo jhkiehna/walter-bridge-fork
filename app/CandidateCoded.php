@@ -3,12 +3,14 @@
 namespace App;
 
 use App\User;
+use App\WalterRecordTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CandidateCoded extends Model
 {
     use SoftDeletes;
+    use WalterRecordTrait;
 
     protected $table = 'candidates_coded';
 
@@ -33,22 +35,18 @@ class CandidateCoded extends Model
     {
         $centralId = self::translateWalterUserIdToCentralUserId($candidateCoded->consultant);
 
-        $localCandidateCoded = self::create([
-            'central_id' => $centralId ?? 1,
-            'walter_consultant_id' => (int) $candidateCoded->consultant,
-            'walter_coded_id' => $candidateCoded->id,
-            'date' => $candidateCoded->date
-        ]);
+        $localCandidateCoded = self::updateOrCreate(
+            ['walter_coded_id' => $candidateCoded->id],
+            [
+                'central_id' => $centralId ?? 1,
+                'walter_consultant_id' => (int) $candidateCoded->consultant,
+                'date' => $candidateCoded->date,
+                'updated_at' => $candidateCoded->updated_at
+            ]
+        );
 
         if (!$centralId) {
             FailedItem::make()->failable()->associate($localCandidateCoded)->save();
         }
-    }
-
-    protected static function translateWalterUserIdToCentralUserId($consultantId)
-    {
-        $user = User::where('walter_id', $consultantId)->first();
-
-        return $user ? $user->central_id : null;
     }
 }

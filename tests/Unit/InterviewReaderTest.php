@@ -23,13 +23,14 @@ class InterviewReaderTest extends TestCase
 
         $users = User::all();
 
-        for ($i = 2; $i <= 14; $i++) {
+        for ($i = 1; $i <= 14; $i++) {
             DB::connection('sqlite_walter_test')
                 ->table('jobOrder_interview')
                 ->insert([
                     'intID' => $i,
                     'DateCreated' => Carbon::now()->subDays($i),
                     'Consultant' => $users[$i]->walter_id ?? 1,
+                    'updated_at' => Carbon::now()->subDays($i)
                 ]);
         }
     }
@@ -38,13 +39,13 @@ class InterviewReaderTest extends TestCase
     {
         factory(Interview::class)->create([
             'walter_interview_id' => 1,
-            'date' => Carbon::now()->subWeek(2),
+            'updated_at' => Carbon::now()->subWeeks(3),
         ]);
 
         $interviews = (new InterviewReader)->getNewRecords();
 
         $this->assertFalse($interviews->isEmpty());
-        $this->assertEquals($interviews->first()->id, 2);
+        $this->assertEquals($interviews->first()->id, 1);
         $this->assertObjectHasAttribute('consultant', $interviews->first());
     }
 

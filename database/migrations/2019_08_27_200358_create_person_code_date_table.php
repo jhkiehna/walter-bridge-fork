@@ -18,6 +18,8 @@ class CreatePersonCodeDateTable extends Migration
             $table->bigIncrements('cdid');
             $table->dateTime('dateCoded');
             $table->integer('consultant');
+
+            $table->timestamps();
         });
     }
 

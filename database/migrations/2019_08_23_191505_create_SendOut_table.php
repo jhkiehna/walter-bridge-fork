@@ -19,6 +19,8 @@ class CreateSendOutTable extends Migration
             $table->dateTime('DateSent');
             $table->integer('Consultant');
             $table->boolean('firstResume');
+
+            $table->timestamps();
         });
     }
 

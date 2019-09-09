@@ -23,36 +23,30 @@ abstract class BaseFetch extends Command
             return;
         }
 
-        $dataCollection = $this->fetchRecords();
+        $query = $this->reader->getQuery($this->startDate, $this->endDate);
 
-        $progressBar = $this->output->createProgressBar($dataCollection->count());
-        $progressBar->setFormat(" %message% \n %current%/%max% [%bar%] %percent:3s%% \n Time: %elapsed:6s%/%estimated:-6s%  Memory: %memory:6s%");
+        if ($query->count() == 0) {
+            $this->abortMessage("No records found...");
+            return;
+        }
+
+        $progressBar = $this->output->createProgressBar($query->count());
+        $progressBar->setFormat(" %message% \n\n %current%/%max% [%bar%] %percent:3s%% \n\n Elapsed / Estimated: \t %elapsed:6s% / %estimated:-6s% \n Memory Used: %memory:6s%\n");
         $progressBar->setMessage("Processing {$this->recordType}s...");
         $progressBar->start();
 
-        if (!$dataCollection->isEmpty()) {
-            $dataCollection->chunk(100)->each(function ($chunk) use ($progressBar) {
-
-                $chunk->each(function ($record) {
+        $query->orderBy($this->reader->primaryKey)->chunk(500, function ($dataChunk) use ($progressBar) {
+            if (!empty($dataChunk)) {
+                $dataChunk->each(function ($record) use ($progressBar) {
                     $this->reader->localModel::writeWithForeignRecord($record);
+                    $progressBar->advance();
                 });
-
-                $progressBar->advance(100);
-            });
-        }
+            }
+        });
 
         $progressBar->finish();
 
         $this->info("\n Processing Complete \n");
-    }
-
-    private function fetchRecords()
-    {
-        if (!empty($this->startDate) && !empty($this->endDate)) {
-            return $this->reader->getBetween($this->startDate, $this->endDate);
-        }
-
-        return $this->reader->getAll();
     }
 
     private function validateBetweenOption()

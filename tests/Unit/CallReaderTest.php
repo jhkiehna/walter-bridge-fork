@@ -35,7 +35,8 @@ class CallReaderTest extends TestCase
                     'type' => $type == 0 ? 'Incoming' : $type == 1 ? 'Outgoing' : 'Transfer',
                     'date' => Carbon::now()->subDays($i),
                     'duration' => rand(1, 1000),
-                    'raw' => ''
+                    'raw' => '',
+                    'updated_at' => Carbon::now()->subDays($i)
                 ]);
         }
     }
@@ -43,7 +44,7 @@ class CallReaderTest extends TestCase
     public function testItCanGetNewCalls()
     {
         factory(Call::class)->create([
-            'date' => Carbon::now()->subWeeks(2),
+            'updated_at' => Carbon::now()->subWeeks(3),
         ]);
 
         $calls = (new CallReader)->getNewRecords();
@@ -71,5 +72,34 @@ class CallReaderTest extends TestCase
         $this->assertTrue($localCalls->first()->user != null);
         $this->assertTrue($localCalls->first()->intranet_user_id != null);
         $this->assertTrue($localCalls->first()->stats_call_id != null);
+    }
+
+    public function testItCanUpdateExistingLocalCallsWhenTheyAreUpdatedInStats()
+    {
+        Artisan::call("db:seed", [
+            "--database" => "sqlite_testing",
+            "--env" => "testing"
+        ]);
+        factory(Call::class)->create([
+            'central_id' => 1,
+            'stats_call_id' => 1,
+            'updated_at' => Carbon::now()->subWeeks(2),
+        ]);
+        DB::connection('sqlite_stats_test')
+            ->table('calls')
+            ->where('id', 1)
+            ->update([
+                'dialed_number' => 5555555555,
+                'type' => 'Transfer',
+                'duration' => 0,
+                'updated_at' => Carbon::today()
+            ]);
+
+        (new CallReader)->read();
+        $localUpdatedCall = Call::where('stats_call_id', 1)->first();
+
+        $this->assertEquals($localUpdatedCall->dialed_number, 5555555555);
+        $this->assertEquals($localUpdatedCall->type, 'Transfer');
+        $this->assertEquals($localUpdatedCall->duration, 0);
     }
 }
