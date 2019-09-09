@@ -56,6 +56,11 @@ class Kernel extends ConsoleKernel
                  ->everyMinute()
                  ->name("ReadCalls")
                  ->withoutOverlapping();
+
+        $schedule->call('App\Services\Stats\EmailReader@read')
+                 ->everyMinute()
+                 ->name("ReadEmails")
+                 ->withoutOverlapping();
     }
 
     /**
