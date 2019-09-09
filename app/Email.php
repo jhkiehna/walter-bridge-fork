@@ -40,7 +40,6 @@ class Email extends Model
         $localEmail = self::updateOrCreate(
             ['walter_email_id' => $email->id],
             [
-                'walter_email_id' => $email->id,
                 'central_id' => $centralId ?? 1,
                 'participant_email' => $email->participant_email,
                 'user_email' => $email->user_email,
