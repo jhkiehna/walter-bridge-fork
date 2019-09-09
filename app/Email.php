@@ -37,8 +37,6 @@ class Email extends Model
     {
         $centralId = self::translateWalterUserIdToCentralUserId($email->walter_id);
 
-        print($email->id);
-
         $localEmail = self::updateOrCreate(
             ['walter_email_id' => $email->id],
             [
