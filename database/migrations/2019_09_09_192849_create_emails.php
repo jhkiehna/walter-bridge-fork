@@ -18,7 +18,7 @@ class CreateEmails extends Migration
             $table->bigInteger("central_id")->unsigned();
             $table->bigInteger("walter_email_id")->unsigned();
             $table->dateTime("date");
-            $table->text("details");
+            $table->longText("details");
             $table->integer("action")->unsigned();
             $table->string("participant_email");
             $table->string("user_email");

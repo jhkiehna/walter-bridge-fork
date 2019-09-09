@@ -14,6 +14,13 @@ class Email extends Model
     use WalterRecordTrait;
 
     protected $fillable = [
+        'walter_email_id',
+        'central_id',
+        'participant_email',
+        'user_email',
+        'action',
+        'details',
+        'date'
     ];
 
     public function user()
@@ -30,11 +37,14 @@ class Email extends Model
     {
         $centralId = self::translateWalterUserIdToCentralUserId($email->walter_id);
 
-        $localSendout = self::updateOrCreate(
+        print($email->id);
+
+        $localEmail = self::updateOrCreate(
             ['walter_email_id' => $email->id],
             [
+                'walter_email_id' => $email->id,
                 'central_id' => $centralId ?? 1,
-                'person_email' => $email->participant_email,
+                'participant_email' => $email->participant_email,
                 'user_email' => $email->user_email,
                 'action' => $email->action,
                 'details' => $email->details,
@@ -43,7 +53,7 @@ class Email extends Model
         );
 
         if (!$centralId) {
-            FailedItem::make()->failable()->associate($localSendout)->save();
+            FailedItem::make()->failable()->associate($localEmail)->save();
         }
     }
 }

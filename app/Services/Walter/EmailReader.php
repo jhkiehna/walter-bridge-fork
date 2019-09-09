@@ -17,7 +17,7 @@ class EmailReader extends Reader
         parent::__construct();
 
         $this->localModel = new Email;
-        $this->primaryKey = 'intID';
+        $this->primaryKey = 'RcID';
 
         $this->query = DB::connection($this->walterDriver)
             ->table("recordCard")
@@ -26,14 +26,15 @@ class EmailReader extends Reader
                     ->whereIn("recordCard.action", [1, 2]);
             })
             ->join("person_email", "person_recordCard.person", "=", "person_email.person")
-            ->join("users", "users.id", "=", "recordCard.userID")
+            ->join("emailAddress", "emailAddress.emid", "=", "person_email.email")
+            ->join("users", "users.uID", "=", "recordCard.userID")
             ->select([
                 'recordCard.RcID as id',
                 'recordCard.date as date',
                 'recordCard.details as details',
                 'recordCard.action as action',
-                'person_email.emailaddress as participant_email',
-                'users.emailaddress as user_email',
+                'emailAddress.emailAddress as participant_email',
+                'users.emailAddress as user_email',
                 'users.uID as walter_id'
             ]);
     }
@@ -57,7 +58,7 @@ class EmailReader extends Reader
     protected function getBetweenQuery(Carbon $startDate, Carbon $endDate)
     {
         return $this->query
-            ->where('dateCreated', '>=', $startDate)
-            ->where('dateCreated', '<=', $endDate);
+            ->where('recordCard.date', '>=', $startDate)
+            ->where('recordCard.date', '<=', $endDate);
     }
 }
