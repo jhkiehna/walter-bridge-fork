@@ -6,6 +6,7 @@ use App\Console\Commands\FetchCalls;
 use App\Console\Commands\RetryFailed;
 use App\Console\Commands\FetchSendouts;
 use App\Console\Commands\FetchInterviews;
+use App\Console\Commands\FetchEmails;
 use Illuminate\Console\Scheduling\Schedule;
 use App\Console\Commands\FetchCandidatesCoded;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -20,6 +21,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         FetchInterviews::class,
+        FetchEmails::class,
         FetchSendouts::class,
         FetchCalls::class,
         FetchCandidatesCoded::class,
@@ -53,6 +55,11 @@ class Kernel extends ConsoleKernel
         $schedule->call('App\Services\Stats\CallReader@read')
                  ->everyMinute()
                  ->name("ReadCalls")
+                 ->withoutOverlapping();
+
+        $schedule->call('App\Services\Stats\EmailReader@read')
+                 ->everyMinute()
+                 ->name("ReadEmails")
                  ->withoutOverlapping();
     }
 
