@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Services\KafkaConsumer;
+use App\Services\KafkaEvent;
 
 class KafkaConsume extends Command
 {
