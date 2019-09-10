@@ -21,7 +21,7 @@ class KafkaConsumer
      *
      * @return void
      */
-    public function start(Closure $handler)
+    public function start(\Closure $handler)
     {
         $this->consumer->start($handler);
     }

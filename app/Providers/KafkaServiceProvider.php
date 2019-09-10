@@ -42,7 +42,7 @@ class KafkaServiceProvider extends ServiceProvider
 
                 $config->setGroupId("walter-bridge");
                 $config->setTopics(config('kafka.topics'));
-                $config->setOffsetReset("latest");
+                $config->setOffsetReset("earliest");
 
                 $consumer = new \Kafka\Consumer();
 
@@ -80,7 +80,7 @@ class KafkaServiceProvider extends ServiceProvider
         $config->setSslEnable(true);
         $config->setSslEnableAuthentication(false);
         $config->setSslCafile(config('kafka.ca_file'));
-        $config->setTimeout(6000);
+        $config->setTimeout(7000);
     }
 
     /**
