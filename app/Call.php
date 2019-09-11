@@ -32,7 +32,7 @@ class Call extends Model
         return $this->morphMany(FailedItem::class, 'failable');
     }
 
-    public function getPhoneUtilityAttribute()
+    public function getPhoneUtility()
     {
         return PhoneNumberUtil::getInstance();
     }
@@ -96,7 +96,7 @@ class Call extends Model
                 'call' => [
                     'id' => $this->stats_call_id,
                     'user_id' => $this->central_id,
-                    'participant_number' => $this->phoneUtility->format(
+                    'participant_number' => $this->getPhoneUtility()->format(
                         $libPhoneNumberObject,
                         PhoneNumberFormat::E164
                     ),
@@ -120,15 +120,15 @@ class Call extends Model
             return false;
         }
 
-        return $this->phoneUtility->isValidNumber($libPhoneNumberObject);
+        return $this->getPhoneUtility()->isValidNumber($libPhoneNumberObject);
     }
 
     private function parseNumber()
     {
         if ($this->international == true) {
-            return $this->phoneUtility->parse('+' . substr("{$this->dialed_number}", 2), "");
+            return $this->getPhoneUtility()->parse('+' . substr("{$this->dialed_number}", 2), "");
         }
 
-        return $this->phoneUtility->parse(substr("{$this->dialed_number}", 1), 'US');
+        return $this->getPhoneUtility()->parse(substr("{$this->dialed_number}", 1), 'US');
     }
 }

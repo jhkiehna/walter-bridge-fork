@@ -13,15 +13,15 @@ class PublishKafka implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    private $kafkaProducer;
+    private $objectToPublish;
 
-    public function __construct(KafkaProducer $kafkaProducer)
+    public function __construct($objectToPublish)
     {
-        $this->kafkaProducer = $kafkaProducer;
+        $this->objectToPublish = $objectToPublish;
     }
 
     public function handle()
     {
-        //app(KafkaProducer::class)->publish("testing", json_encode($this));
+        // app(KafkaProducer::class)->publish("testing", json_encode($this));
     }
 }
