@@ -7,6 +7,7 @@
 -   `composer install`
 -   `cp .env.example .env`
 -   Edit environment variables in .env appropriately; fill in DB_WALTER and DB_STATS env vars
+-   Ensure variable `QUEUE_CONNECTION=database`
 
 ## Running Locally
 

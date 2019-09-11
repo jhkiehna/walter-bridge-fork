@@ -3,8 +3,9 @@
 namespace App;
 
 use App\User;
-use App\Services\KafkaProducer;
+use App\Jobs\PublishKafka;
 use libphonenumber\PhoneNumberUtil;
+use libphonenumber\PhoneNumberFormat;
 use Illuminate\Database\Eloquent\Model;
 
 class Call extends Model
@@ -90,8 +91,24 @@ class Call extends Model
         $libPhoneNumberObject = $this->parseNumber();
 
         if ($libPhoneNumberObject && $this->validateCall($libPhoneNumberObject)) {
-            //this will be handled by a queued job in another PR
-            app(KafkaProducer::class)->publish("testing", json_encode($this));
+            $callStruct = (object) [
+                'type' => 'call',
+                'call' => [
+                    'id' => $this->stats_call_id,
+                    'user_id' => $this->central_id,
+                    'participant_number' => $this->phoneUtility->format(
+                        $libPhoneNumberObject,
+                        PhoneNumberFormat::E164
+                    ),
+                    'incoming' => $this->type == 'Incoming' ? true : false,
+                    'duration' => $this->duration,
+                    //translate date or created_at to UTC, from probably EDT
+                    'created_at' => $this->date,
+                ]
+            ];
+
+            PublishKafka::dispatch($callStruct);
+
             return true;
         }
         return false;
