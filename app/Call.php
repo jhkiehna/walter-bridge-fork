@@ -3,6 +3,8 @@
 namespace App;
 
 use App\User;
+use App\Services\KafkaProducer;
+use libphonenumber\PhoneNumberUtil;
 use Illuminate\Database\Eloquent\Model;
 
 class Call extends Model
@@ -13,6 +15,7 @@ class Call extends Model
         'stats_call_id',
         'valid',
         'dialed_number',
+        'international',
         'type',
         'duration',
         'date',
@@ -28,6 +31,11 @@ class Call extends Model
         return $this->morphMany(FailedItem::class, 'failable');
     }
 
+    public function getPhoneUtilityAttribute()
+    {
+        return PhoneNumberUtil::getInstance();
+    }
+
     public static function writeWithForeignRecord($call)
     {
         $centralId = self::translateIntranetUserIdToCentralUserId($call->user_id);
@@ -39,6 +47,7 @@ class Call extends Model
                 'intranet_user_id' => $call->user_id,
                 'valid' => $call->valid,
                 'dialed_number' => $call->dialed_number,
+                'international' => $call->international,
                 'type' => $call->type,
                 'date' => $call->date,
                 'duration' => $call->duration,
@@ -46,9 +55,11 @@ class Call extends Model
             ]
         );
 
-        if (!$centralId) {
-            FailedItem::make()->failable()->associate($localCall)->save();
+        if ($centralId) {
+            return $localCall;
         }
+
+        FailedItem::make()->failable()->associate($localCall)->save();
     }
 
     protected static function translateIntranetUserIdToCentralUserId($intranetId)
@@ -72,5 +83,35 @@ class Call extends Model
         $this->update([
             'central_id' => $user->central_id
         ]);
+    }
+
+    public function publishToKafka()
+    {
+        $libPhoneNumberObject = $this->parseNumber();
+
+        if ($libPhoneNumberObject && $this->validateCall($libPhoneNumberObject)) {
+            //this will be handled by a queued job in another PR
+            app(KafkaProducer::class)->publish("testing", json_encode($this));
+            return true;
+        }
+        return false;
+    }
+
+    private function validateCall($libPhoneNumberObject)
+    {
+        if ($this->duration == 0) {
+            return false;
+        }
+
+        return $this->phoneUtility->isValidNumber($libPhoneNumberObject);
+    }
+
+    private function parseNumber()
+    {
+        if ($this->international == true) {
+            return $this->phoneUtility->parse('+' . substr("{$this->dialed_number}", 2), "");
+        }
+
+        return $this->phoneUtility->parse(substr("{$this->dialed_number}", 1), 'US');
     }
 }

@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -13,14 +14,16 @@ class CreatePersonCodeDateTable extends Migration
      */
     public function up()
     {
-        Schema::connection('sqlite_walter_test')->dropIfExists('person_codeDate');
-        Schema::connection('sqlite_walter_test')->create('person_codeDate', function (Blueprint $table) {
-            $table->bigIncrements('cdid');
-            $table->dateTime('dateCoded');
-            $table->integer('consultant');
+        if (!App::environment('production')) {
+            Schema::connection('sqlite_walter_test')->dropIfExists('person_codeDate');
+            Schema::connection('sqlite_walter_test')->create('person_codeDate', function (Blueprint $table) {
+                $table->bigIncrements('cdid');
+                $table->dateTime('dateCoded');
+                $table->integer('consultant');
 
-            $table->timestamps();
-        });
+                $table->timestamps();
+            });
+        }
     }
 
     /**
@@ -30,6 +33,8 @@ class CreatePersonCodeDateTable extends Migration
      */
     public function down()
     {
-        Schema::connection('sqlite_walter_test')->dropIfExists('person_codeDate');
+        if (!App::environment('production')) {
+            Schema::connection('sqlite_walter_test')->dropIfExists('person_codeDate');
+        }
     }
 }

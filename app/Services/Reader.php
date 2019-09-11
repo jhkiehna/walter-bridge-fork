@@ -25,7 +25,11 @@ abstract class Reader
 
         if (!$records->isEmpty()) {
             $records->each(function ($record) {
-                $this->localModel::writeWithForeignRecord($record);
+                $localRecord = $this->localModel::writeWithForeignRecord($record);
+
+                if ($localRecord) {
+                    $localRecord->publishToKafka();
+                }
             });
         }
     }

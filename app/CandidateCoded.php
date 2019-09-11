@@ -45,8 +45,10 @@ class CandidateCoded extends Model
             ]
         );
 
-        if (!$centralId) {
-            FailedItem::make()->failable()->associate($localCandidateCoded)->save();
+        if ($centralId) {
+            return $localCandidateCoded;
         }
+
+        FailedItem::make()->failable()->associate($localCandidateCoded)->save();
     }
 }

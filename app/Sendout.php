@@ -44,8 +44,10 @@ class Sendout extends Model
             ]
         );
 
-        if (!$centralId) {
-            FailedItem::make()->failable()->associate($localSendout)->save();
+        if ($centralId) {
+            return $localSendout;
         }
+
+        FailedItem::make()->failable()->associate($localSendout)->save();
     }
 }

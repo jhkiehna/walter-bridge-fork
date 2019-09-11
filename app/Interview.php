@@ -44,8 +44,10 @@ class Interview extends Model
             ]
         );
 
-        if (!$centralId) {
-            FailedItem::make()->failable()->associate($localInterview)->save();
+        if ($centralId) {
+            return $localInterview;
         }
+
+        FailedItem::make()->failable()->associate($localInterview)->save();
     }
 }

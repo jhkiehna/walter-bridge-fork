@@ -21,6 +21,7 @@ class CreateCallsTable extends Migration
 
             $table->boolean('valid');
             $table->bigInteger('dialed_number')->unsigned();
+            $table->boolean('international');
             $table->enum('type', ['Incoming', 'Outgoing', 'Transfer'])->nullable();
 
             $table->integer('duration')->unsigned();

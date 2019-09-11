@@ -32,6 +32,7 @@ class CallReaderTest extends TestCase
                     'user_id' => $users[$i]->intranet_id ?? 1,
                     'valid' => true,
                     'dialed_number' => rand(1111111111, 9999999999),
+                    'international' => false,
                     'type' => $type == 0 ? 'Incoming' : $type == 1 ? 'Outgoing' : 'Transfer',
                     'date' => Carbon::now()->subDays($i),
                     'duration' => rand(1, 1000),

@@ -26,6 +26,7 @@ class CallReader extends Reader
                 'user_id',
                 'valid',
                 'dialed_number',
+                'international',
                 'type',
                 'date',
                 'duration',

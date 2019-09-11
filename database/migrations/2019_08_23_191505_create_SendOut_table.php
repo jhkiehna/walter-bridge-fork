@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -13,15 +14,17 @@ class CreateSendOutTable extends Migration
      */
     public function up()
     {
-        Schema::connection('sqlite_walter_test')->dropIfExists('SendOut');
-        Schema::connection('sqlite_walter_test')->create('SendOut', function (Blueprint $table) {
-            $table->bigIncrements('soid');
-            $table->dateTime('DateSent');
-            $table->integer('Consultant');
-            $table->boolean('firstResume');
+        if (!App::environment('production')) {
+            Schema::connection('sqlite_walter_test')->dropIfExists('SendOut');
+            Schema::connection('sqlite_walter_test')->create('SendOut', function (Blueprint $table) {
+                $table->bigIncrements('soid');
+                $table->dateTime('DateSent');
+                $table->integer('Consultant');
+                $table->boolean('firstResume');
 
-            $table->timestamps();
-        });
+                $table->timestamps();
+            });
+        }
     }
 
     /**
@@ -31,6 +34,8 @@ class CreateSendOutTable extends Migration
      */
     public function down()
     {
-        Schema::connection('sqlite_walter_test')->dropIfExists('SendOut');
+        if (!App::environment('production')) {
+            Schema::connection('sqlite_walter_test')->dropIfExists('SendOut');
+        }
     }
 }
