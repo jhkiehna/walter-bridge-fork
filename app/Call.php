@@ -93,7 +93,7 @@ class Call extends Model
         if ($libPhoneNumberObject && $this->validateCall($libPhoneNumberObject)) {
             $callStruct = (object) [
                 'type' => 'call',
-                'call' => [
+                'call' => (object) [
                     'id' => $this->stats_call_id,
                     'user_id' => $this->central_id,
                     'participant_number' => $this->getPhoneUtility()->format(
@@ -102,8 +102,7 @@ class Call extends Model
                     ),
                     'incoming' => $this->type == 'Incoming' ? true : false,
                     'duration' => $this->duration,
-                    //translate date or created_at to UTC, from probably EDT
-                    'created_at' => $this->date,
+                    'created_at' => $this->date->toISOString(),
                 ]
             ];
 

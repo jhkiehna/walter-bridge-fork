@@ -38,7 +38,7 @@ class CallTest extends TestCase
 
     public function testItCanPublishACallWithANationalNumberToKafka()
     {
-        $this->expectsJobs(PublishKafka::class);
+        // $this->expectsJobs(PublishKafka::class);
         $call = factory(Call::class)->states('national')->create([
             'dialed_number' => 18282519900
         ]);
@@ -48,8 +48,9 @@ class CallTest extends TestCase
         $this->assertTrue($isSuccess);
     }
 
-    public function testItCantPublishACallWithThatDoesntPassValidationOnCallModel()
+    public function testItCantPublishACallThatDoesntPassValidationOnCallModel()
     {
+        $this->doesntExpectJobs(PublishKafka::class);
         $invalidCall1 = factory(Call::class)->states('national')->create([
             'dialed_number' => 11111111111
         ]);
