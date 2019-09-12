@@ -52,6 +52,7 @@ class CandidateCodedReaderTest extends TestCase
     public function testItCanUseTheReadMethodAndCreateCandidatesCodedInLocalDB()
     {
         Artisan::call("db:seed", [
+            "--class" => "UserTableSeeder",
             "--database" => "sqlite_testing",
             "--env" => "testing"
         ]);
