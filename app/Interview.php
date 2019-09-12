@@ -50,4 +50,18 @@ class Interview extends Model
 
         FailedItem::make()->failable()->associate($localInterview)->save();
     }
+
+    public function publishToKafka()
+    {
+        $interviewObject = (object) [
+            'type' => 'interview',
+            'interview' => (object) [
+                'id' => $this->walter_interview_id,
+                'user_id' => $this->central_id,
+                'created_at' => $this->date->toISOString(),
+            ]
+        ];
+
+        PublishKafka::dispatch($interviewObject);
+    }
 }

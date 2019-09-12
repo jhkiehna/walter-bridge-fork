@@ -50,4 +50,18 @@ class Sendout extends Model
 
         FailedItem::make()->failable()->associate($localSendout)->save();
     }
+
+    public function publishToKafka()
+    {
+        $sendoutObject = (object) [
+            'type' => 'sendout',
+            'sendout' => (object) [
+                'id' => $this->walter_sendout_id,
+                'user_id' => $this->central_id,
+                'created_at' => $this->date->toISOString(),
+            ]
+        ];
+
+        PublishKafka::dispatch($sendoutObject);
+    }
 }

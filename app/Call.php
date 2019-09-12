@@ -91,7 +91,7 @@ class Call extends Model
         $libPhoneNumberObject = $this->parseNumber();
 
         if ($libPhoneNumberObject && $this->validateCall($libPhoneNumberObject)) {
-            $callStruct = (object) [
+            $callObject = (object) [
                 'type' => 'call',
                 'call' => (object) [
                     'id' => $this->stats_call_id,
@@ -106,7 +106,7 @@ class Call extends Model
                 ]
             ];
 
-            PublishKafka::dispatch($callStruct);
+            PublishKafka::dispatch($callObject);
 
             return true;
         }
