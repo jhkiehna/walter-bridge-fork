@@ -65,7 +65,7 @@ class Email extends Model
                 'id' => $this->walter_email_id,
                 'user_id' => $this->central_id,
                 'participant_email' => $this->participant_email,
-                'incoming' => null,
+                'incoming' => $this->action == 2 ? true : false,
                 'body' => $this->details,
                 'created_at' => $this->date->toISOString(),
             ]
