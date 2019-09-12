@@ -4,6 +4,7 @@ namespace App;
 
 use App\User;
 use App\WalterRecordTrait;
+use App\Jobs\PublishKafka;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 

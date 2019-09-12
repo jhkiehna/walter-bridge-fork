@@ -22,6 +22,6 @@ class PublishKafka implements ShouldQueue
 
     public function handle()
     {
-        app(KafkaProducer::class)->publish('testing', json_encode($this->objectToPublish));
+        app(KafkaProducer::class)->publish('bridge', json_encode($this->objectToPublish));
     }
 }

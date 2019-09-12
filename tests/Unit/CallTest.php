@@ -17,11 +17,6 @@ class CallTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-
-        $kafkaMock = Mockery::mock(KafkaProducer::class);
-        $kafkaMock->shouldReceive('publish')->andReturn(null);
-
-        $this->app->instance(KafkaProducer::class, $kafkaMock);
     }
 
     public function testItCanPublishACallWithAnInternationalNumberToKafka()
@@ -38,7 +33,7 @@ class CallTest extends TestCase
 
     public function testItCanPublishACallWithANationalNumberToKafka()
     {
-        // $this->expectsJobs(PublishKafka::class);
+        $this->expectsJobs(PublishKafka::class);
         $call = factory(Call::class)->states('national')->create([
             'dialed_number' => 18282519900
         ]);
