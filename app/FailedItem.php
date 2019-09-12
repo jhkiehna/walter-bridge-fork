@@ -21,11 +21,4 @@ class FailedItem extends Model
     {
         return $this->morphTo();
     }
-
-    public function shouldDelete($centralId)
-    {
-        if ($this->failable->central_id != $centralId) {
-            $this->delete();
-        }
-    }
 }
