@@ -9,8 +9,11 @@
 -   Edit environment variables in .env appropriately; fill in DB_WALTER and DB_STATS env vars
 -   Ensure variable `QUEUE_CONNECTION=database`
 -   Set up supervisor to run the queue workers
+
     --`sudo apt-get install supervisor`
+
     --`sudo vim /etc/supervisor/conf.d/walter-bridge-worker.conf`
+
     --create laravel worker
 
 ```
@@ -26,7 +29,9 @@ stdout_logfile=/path/to/app/walter-bridge-worker.log
 ```
 
 -   Set up supervisor to run a the kafka user consumer
+
     --`sudo vim /etc/supervisor/conf.d/walter-bridge-kafka-consumer-worker.conf`
+
     --create laravel worker
 
 ```
@@ -42,9 +47,13 @@ stdout_logfile=/path/to/app/walter-bridge-kafka-consumer-worker.log
 ```
 
 -   Update and Start Supervisor
+
     --`sudo supervisorctl reread`
+
     --`sudo supervisorctl update`
+
     --`sudo supervisorctl start walter-bridge-worker:*`
+
     --`sudo supervisorctl start walter-bridge-kafka-consumer-worker:*`
 
 ## Running Locally
