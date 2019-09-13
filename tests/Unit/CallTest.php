@@ -5,7 +5,7 @@ namespace Tests\Unit;
 use Mockery;
 use App\Call;
 use Tests\TestCase;
-use App\Jobs\PublishKafka;
+use App\Jobs\PublishKafkaJob;
 use App\Services\KafkaProducer;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use libphonenumber\geocoding\PhoneNumberOfflineGeocoder;
@@ -21,7 +21,7 @@ class CallTest extends TestCase
 
     public function testItCanPublishACallWithAnInternationalNumberToKafka()
     {
-        $this->expectsJobs(PublishKafka::class);
+        $this->expectsJobs(PublishKafkaJob::class);
         $call = factory(Call::class)->states('international')->create([
             'dialed_number' => 11441946695420
         ]);
@@ -33,7 +33,7 @@ class CallTest extends TestCase
 
     public function testItCanPublishACallWithANationalNumberToKafka()
     {
-        $this->expectsJobs(PublishKafka::class);
+        $this->expectsJobs(PublishKafkaJob::class);
         $call = factory(Call::class)->states('national')->create([
             'dialed_number' => 18282519900
         ]);
@@ -45,7 +45,7 @@ class CallTest extends TestCase
 
     public function testItCantPublishACallThatDoesntPassValidationOnCallModel()
     {
-        $this->doesntExpectJobs(PublishKafka::class);
+        $this->doesntExpectJobs(PublishKafkaJob::class);
         $invalidCall1 = factory(Call::class)->states('national')->create([
             'dialed_number' => 11111111111
         ]);

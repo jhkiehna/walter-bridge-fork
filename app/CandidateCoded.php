@@ -4,7 +4,7 @@ namespace App;
 
 use App\User;
 use App\WalterRecordTrait;
-use App\Jobs\PublishKafka;
+use App\Jobs\PublishKafkaJob;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -64,6 +64,6 @@ class CandidateCoded extends Model
             ]
         ];
 
-        PublishKafka::dispatch($candidateCodedObject);
+        PublishKafkaJob::dispatch($candidateCodedObject);
     }
 }

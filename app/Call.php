@@ -3,7 +3,7 @@
 namespace App;
 
 use App\User;
-use App\Jobs\PublishKafka;
+use App\Jobs\PublishKafkaJob;
 use libphonenumber\PhoneNumberUtil;
 use libphonenumber\PhoneNumberFormat;
 use Illuminate\Database\Eloquent\Model;
@@ -106,7 +106,7 @@ class Call extends Model
                 ]
             ];
 
-            PublishKafka::dispatch($callObject);
+            PublishKafkaJob::dispatch($callObject);
 
             return true;
         }

@@ -5,7 +5,7 @@ namespace App;
 use App\User;
 use App\FailedItem;
 use App\WalterRecordTrait;
-use App\Jobs\PublishKafka;
+use App\Jobs\PublishKafkaJob;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -71,6 +71,6 @@ class Email extends Model
             ]
         ];
 
-        PublishKafka::dispatch($emailObject);
+        PublishKafkaJob::dispatch($emailObject);
     }
 }

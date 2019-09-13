@@ -5,7 +5,7 @@ namespace App;
 use App\User;
 use App\FailedItem;
 use App\WalterRecordTrait;
-use App\Jobs\PublishKafka;
+use App\Jobs\PublishKafkaJob;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -63,6 +63,6 @@ class Sendout extends Model
             ]
         ];
 
-        PublishKafka::dispatch($sendoutObject);
+        PublishKafkaJob::dispatch($sendoutObject);
     }
 }
