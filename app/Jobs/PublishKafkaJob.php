@@ -13,7 +13,7 @@ class PublishKafkaJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    private $objectToPublish;
+    public $objectToPublish;
 
     public function __construct($objectToPublish)
     {

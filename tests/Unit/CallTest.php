@@ -2,11 +2,11 @@
 
 namespace Tests\Unit;
 
-use Mockery;
 use App\Call;
+use Carbon\Carbon;
 use Tests\TestCase;
 use App\Jobs\PublishKafkaJob;
-use App\Services\KafkaProducer;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use libphonenumber\geocoding\PhoneNumberOfflineGeocoder;
 
@@ -82,5 +82,37 @@ class CallTest extends TestCase
 
         $this->assertEquals($countryName1, "United Kingdom");
         $this->assertEquals($countryName2, "France");
+    }
+
+    public function testPublishToKafkaMethodCreatesTheCorrectObject()
+    {
+        Queue::fake();
+
+        $call = factory(Call::class)->states('national')->create([
+            'dialed_number' => 18282519900,
+            'type' => 'Incoming',
+            'duration' => 50,
+            'date' => Carbon::now(),
+        ]);
+        $expectedCallObject = (object) [
+            'type' => 'call',
+            'call' => (object) [
+                'id' => $call->stats_call_id,
+                'user_id' => $call->central_id,
+                'participant_number' => '+18282519900',
+                'incoming' => true,
+                'duration' => 50,
+                'created_at' => $call->date->toISOString(),
+            ]
+        ];
+        $call->publishToKafka();
+
+        Queue::assertPushed(PublishKafkaJob::class, function ($job) use ($expectedCallObject) {
+            if (json_encode($job->objectToPublish) == json_encode($expectedCallObject)) {
+                return true;
+            } else {
+                return false;
+            }
+        });
     }
 }
