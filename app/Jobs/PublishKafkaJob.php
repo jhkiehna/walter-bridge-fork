@@ -22,6 +22,6 @@ class PublishKafkaJob implements ShouldQueue
 
     public function handle()
     {
-        app(KafkaProducer::class)->publish('walter-bridge', json_encode($this->objectToPublish));
+        app(KafkaProducer::class)->publish(config('kafka.producer-topic'), json_encode($this->objectToPublish));
     }
 }
