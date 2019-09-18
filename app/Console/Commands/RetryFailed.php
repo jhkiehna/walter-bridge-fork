@@ -66,7 +66,10 @@ class RetryFailed extends Command
             $oldCentralId = $failedItem->failable->central_id;
             $failedItem->failable->updateCentralId();
 
-            $failedItem->shouldDelete($oldCentralId);
+            if ($this->failable->central_id != $oldCentralId) {
+                $failedItem->failable->publishToKafka();
+                $failedItem->delete();
+            }
         });
     }
 }

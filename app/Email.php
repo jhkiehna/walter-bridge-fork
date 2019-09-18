@@ -5,6 +5,7 @@ namespace App;
 use App\User;
 use App\FailedItem;
 use App\WalterRecordTrait;
+use App\Jobs\PublishKafkaJob;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -49,8 +50,27 @@ class Email extends Model
             ]
         );
 
-        if (!$centralId) {
-            FailedItem::make()->failable()->associate($localEmail)->save();
+        if ($centralId) {
+            return $localEmail;
         }
+
+        FailedItem::make()->failable()->associate($localEmail)->save();
+    }
+
+    public function publishToKafka()
+    {
+        $emailObject = (object) [
+            'type' => 'email',
+            'email' => (object) [
+                'id' => $this->walter_email_id,
+                'user_id' => $this->central_id,
+                'participant_email' => $this->participant_email,
+                'incoming' => $this->action == 2 ? true : false,
+                'body' => $this->details,
+                'created_at' => $this->date->toISOString(),
+            ]
+        ];
+
+        PublishKafkaJob::dispatch($emailObject);
     }
 }

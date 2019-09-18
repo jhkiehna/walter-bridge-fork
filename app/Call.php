@@ -3,8 +3,9 @@
 namespace App;
 
 use App\User;
-use App\Services\KafkaProducer;
+use App\Jobs\PublishKafkaJob;
 use libphonenumber\PhoneNumberUtil;
+use libphonenumber\PhoneNumberFormat;
 use Illuminate\Database\Eloquent\Model;
 
 class Call extends Model
@@ -31,7 +32,7 @@ class Call extends Model
         return $this->morphMany(FailedItem::class, 'failable');
     }
 
-    public function getPhoneUtilityAttribute()
+    public function getPhoneUtility()
     {
         return PhoneNumberUtil::getInstance();
     }
@@ -90,8 +91,23 @@ class Call extends Model
         $libPhoneNumberObject = $this->parseNumber();
 
         if ($libPhoneNumberObject && $this->validateCall($libPhoneNumberObject)) {
-            //this will be handled by a queued job in another PR
-            app(KafkaProducer::class)->publish("testing", json_encode($this));
+            $callObject = (object) [
+                'type' => 'call',
+                'call' => (object) [
+                    'id' => $this->stats_call_id,
+                    'user_id' => $this->central_id,
+                    'participant_number' => $this->getPhoneUtility()->format(
+                        $libPhoneNumberObject,
+                        PhoneNumberFormat::E164
+                    ),
+                    'incoming' => $this->type == 'Incoming' ? true : false,
+                    'duration' => $this->duration,
+                    'created_at' => $this->date->toISOString(),
+                ]
+            ];
+
+            PublishKafkaJob::dispatch($callObject);
+
             return true;
         }
         return false;
@@ -103,15 +119,15 @@ class Call extends Model
             return false;
         }
 
-        return $this->phoneUtility->isValidNumber($libPhoneNumberObject);
+        return $this->getPhoneUtility()->isValidNumber($libPhoneNumberObject);
     }
 
     private function parseNumber()
     {
         if ($this->international == true) {
-            return $this->phoneUtility->parse('+' . substr("{$this->dialed_number}", 2), "");
+            return $this->getPhoneUtility()->parse('+' . substr("{$this->dialed_number}", 2), "");
         }
 
-        return $this->phoneUtility->parse(substr("{$this->dialed_number}", 1), 'US');
+        return $this->getPhoneUtility()->parse(substr("{$this->dialed_number}", 1), 'US');
     }
 }

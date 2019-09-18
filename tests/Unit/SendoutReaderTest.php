@@ -53,6 +53,7 @@ class SendoutReaderTest extends TestCase
     public function testItCanUseTheReadMethodAndCreateSendoutsInLocalDB()
     {
         Artisan::call("db:seed", [
+            "--class" => "UserTableSeeder",
             "--database" => "sqlite_testing",
             "--env" => "testing"
         ]);

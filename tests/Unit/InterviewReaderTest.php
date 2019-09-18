@@ -52,6 +52,7 @@ class InterviewReaderTest extends TestCase
     public function testItCanUseTheReadMethodAndCreateInterviewsInLocalDB()
     {
         Artisan::call("db:seed", [
+            "--class" => "UserTableSeeder",
             "--database" => "sqlite_testing",
             "--env" => "testing"
         ]);

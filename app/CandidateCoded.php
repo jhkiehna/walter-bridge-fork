@@ -4,6 +4,7 @@ namespace App;
 
 use App\User;
 use App\WalterRecordTrait;
+use App\Jobs\PublishKafkaJob;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -50,5 +51,19 @@ class CandidateCoded extends Model
         }
 
         FailedItem::make()->failable()->associate($localCandidateCoded)->save();
+    }
+
+    public function publishToKafka()
+    {
+        $candidateCodedObject = (object) [
+            'type' => 'candidate-coded',
+            'candidate-coded' => (object) [
+                'id' => $this->walter_coded_id,
+                'user_id' => $this->central_id,
+                'created_at' => $this->date->toISOString(),
+            ]
+        ];
+
+        PublishKafkaJob::dispatch($candidateCodedObject);
     }
 }

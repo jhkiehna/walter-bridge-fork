@@ -58,6 +58,7 @@ class CallReaderTest extends TestCase
     public function testItCanUseTheReadMethodAndCreateCallsInLocalDB()
     {
         Artisan::call("db:seed", [
+            "--class" => "UserTableSeeder",
             "--database" => "sqlite_testing",
             "--env" => "testing"
         ]);
@@ -78,6 +79,7 @@ class CallReaderTest extends TestCase
     public function testItCanUpdateExistingLocalCallsWhenTheyAreUpdatedInStats()
     {
         Artisan::call("db:seed", [
+            "--class" => "UserTableSeeder",
             "--database" => "sqlite_testing",
             "--env" => "testing"
         ]);

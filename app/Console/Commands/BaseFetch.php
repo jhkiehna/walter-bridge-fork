@@ -38,7 +38,12 @@ abstract class BaseFetch extends Command
         $query->orderBy($this->reader->primaryKey)->chunk(500, function ($dataChunk) use ($progressBar) {
             if (!empty($dataChunk)) {
                 $dataChunk->each(function ($record) use ($progressBar) {
-                    $this->reader->localModel::writeWithForeignRecord($record);
+                    $localRecord = $this->reader->localModel::writeWithForeignRecord($record);
+
+                    if ($localRecord) {
+                        $localRecord->publishToKafka();
+                    }
+
                     $progressBar->advance();
                 });
             }

@@ -5,6 +5,7 @@ namespace App;
 use App\User;
 use App\FailedItem;
 use App\WalterRecordTrait;
+use App\Jobs\PublishKafkaJob;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -49,5 +50,19 @@ class Sendout extends Model
         }
 
         FailedItem::make()->failable()->associate($localSendout)->save();
+    }
+
+    public function publishToKafka()
+    {
+        $sendoutObject = (object) [
+            'type' => 'sendout',
+            'sendout' => (object) [
+                'id' => $this->walter_sendout_id,
+                'user_id' => $this->central_id,
+                'created_at' => $this->date->toISOString(),
+            ]
+        ];
+
+        PublishKafkaJob::dispatch($sendoutObject);
     }
 }
