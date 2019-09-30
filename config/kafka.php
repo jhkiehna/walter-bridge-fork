@@ -6,7 +6,7 @@ return [
     'client_id' => 'walter-bridge',
 
     'brokers' => [
-        "pkc-e0x5p.us-east1.gcp.confluent.cloud:9092"
+        "pkc-4nym6.us-east-1.aws.confluent.cloud:9092"
     ],
 
     'sasl' => [
