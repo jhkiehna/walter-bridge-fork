@@ -30,7 +30,7 @@ class EmailTest extends TestCase
         ]);
         $expectedEmailObject = (object) [
             'type' => 'email',
-            'email' => (object) [
+            'data' => (object) [
                 'id' => $email->walter_email_id,
                 'user_id' => $email->central_id,
                 'participant_email' => 'test@testing.com',

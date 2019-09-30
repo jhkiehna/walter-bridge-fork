@@ -24,7 +24,7 @@ class InterviewTest extends TestCase
         $interview = factory(Interview::class)->create();
         $expectedInterviewObject = (object) [
             'type' => 'interview',
-            'interview' => (object) [
+            'data' => (object) [
                 'id' => $interview->walter_interview_id,
                 'user_id' => $interview->central_id,
                 'created_at' => $interview->date->toISOString(),

@@ -24,7 +24,7 @@ class CandidateCodedTest extends TestCase
         $candidateCoded = factory(CandidateCoded::class)->create();
         $expectedCandidateCodedObject = (object) [
             'type' => 'candidate-coded',
-            'candidate-coded' => (object) [
+            'data' => (object) [
                 'id' => $candidateCoded->walter_coded_id,
                 'user_id' => $candidateCoded->central_id,
                 'created_at' => $candidateCoded->date->toISOString(),

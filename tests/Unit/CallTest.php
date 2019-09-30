@@ -96,7 +96,7 @@ class CallTest extends TestCase
         ]);
         $expectedCallObject = (object) [
             'type' => 'call',
-            'call' => (object) [
+            'data' => (object) [
                 'id' => $call->stats_call_id,
                 'user_id' => $call->central_id,
                 'participant_number' => '+18282519900',
