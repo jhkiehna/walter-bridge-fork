@@ -56,7 +56,7 @@ class Interview extends Model
     {
         $interviewObject = (object) [
             'type' => 'interview',
-            'interview' => (object) [
+            'data' => (object) [
                 'id' => $this->walter_interview_id,
                 'user_id' => $this->central_id,
                 'created_at' => $this->date->toISOString(),

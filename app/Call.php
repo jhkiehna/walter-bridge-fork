@@ -93,7 +93,7 @@ class Call extends Model
         if ($libPhoneNumberObject && $this->validateCall($libPhoneNumberObject)) {
             $callObject = (object) [
                 'type' => 'call',
-                'call' => (object) [
+                'data' => (object) [
                     'id' => $this->stats_call_id,
                     'user_id' => $this->central_id,
                     'participant_number' => $this->getPhoneUtility()->format(
