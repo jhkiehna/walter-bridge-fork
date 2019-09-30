@@ -61,7 +61,7 @@ class Email extends Model
     {
         $emailObject = (object) [
             'type' => 'email',
-            'email' => (object) [
+            'data' => (object) [
                 'id' => $this->walter_email_id,
                 'user_id' => $this->central_id,
                 'participant_email' => $this->participant_email,

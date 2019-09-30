@@ -57,7 +57,7 @@ class CandidateCoded extends Model
     {
         $candidateCodedObject = (object) [
             'type' => 'candidate-coded',
-            'candidate-coded' => (object) [
+            'data' => (object) [
                 'id' => $this->walter_coded_id,
                 'user_id' => $this->central_id,
                 'created_at' => $this->date->toISOString(),

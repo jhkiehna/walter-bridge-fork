@@ -56,7 +56,7 @@ class Sendout extends Model
     {
         $sendoutObject = (object) [
             'type' => 'sendout',
-            'sendout' => (object) [
+            'data' => (object) [
                 'id' => $this->walter_sendout_id,
                 'user_id' => $this->central_id,
                 'created_at' => $this->date->toISOString(),

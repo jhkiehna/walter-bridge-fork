@@ -25,7 +25,7 @@ class SendoutTest extends TestCase
         $sendout = factory(Sendout::class)->create();
         $expectedSendoutObject = (object) [
             'type' => 'sendout',
-            'sendout' => (object) [
+            'data' => (object) [
                 'id' => $sendout->walter_sendout_id,
                 'user_id' => $sendout->central_id,
                 'created_at' => $sendout->date->toISOString(),
