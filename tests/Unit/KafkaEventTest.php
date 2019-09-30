@@ -16,7 +16,7 @@ class KafkaEventTest extends TestCase
     {
         $this->expectException(\Exception::class);
 
-        Config::set("kafka.topics", ['user']);
+        Config::set("kafka.topics", ['kimmel']);
 
         (new KafkaEvent('user', "{/This'': } is a bad message'}"))->process();
     }
@@ -32,10 +32,10 @@ class KafkaEventTest extends TestCase
 
     public function testItCallsTheUserCreatedEventForUserEvents()
     {
-        Config::set("kafka.topics", ['user']);
+        Config::set("kafka.topics", ['kimmel']);
 
         $event = [
-            "type" => "user_created",
+            "type" => "user",
             "user" => [
                 "origin_id" => 1,
                 "walter_id" => 1,
@@ -44,7 +44,7 @@ class KafkaEventTest extends TestCase
             ]
         ];
 
-        $result = (new KafkaEvent('user', json_encode($event)))->process();
+        $result = (new KafkaEvent('kimmel', json_encode($event)))->process();
 
         $this->assertTrue($result);
         $this->assertDatabaseHas(
@@ -60,10 +60,10 @@ class KafkaEventTest extends TestCase
 
     public function testItCallsTheUserUpdatedEventForUserEvents()
     {
-        Config::set("kafka.topics", ['user']);
+        Config::set("kafka.topics", ['kimmel']);
 
         $event = [
-            "type" => "user_updated",
+            "type" => "user",
             "user" => [
                 "origin_id" => 1,
                 "walter_id" => 1,
@@ -72,7 +72,7 @@ class KafkaEventTest extends TestCase
             ]
         ];
 
-        $result = (new KafkaEvent('user', json_encode($event)))->process();
+        $result = (new KafkaEvent('kimmel', json_encode($event)))->process();
 
         $this->assertTrue($result);
         $this->assertDatabaseHas(
