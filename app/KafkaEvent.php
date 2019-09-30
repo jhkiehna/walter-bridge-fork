@@ -42,8 +42,7 @@ class KafkaEvent
         }
 
         switch ($this->message->type) {
-            case 'user_created':
-            case 'user_updated':
+            case 'user':
                 (new UserEvent($this->message))->process();
                 break;
         }

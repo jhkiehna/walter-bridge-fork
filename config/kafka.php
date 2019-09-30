@@ -16,5 +16,5 @@ return [
 
     'ca_file' => env('SSL_CA_FILE', '/etc/ssl/cert.pem'),
 
-    'topics' => ['user']
+    'topics' => ['kimmel']
 ];
