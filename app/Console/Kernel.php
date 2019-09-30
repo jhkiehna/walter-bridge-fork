@@ -38,29 +38,29 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->call('App\Services\Walter\SendoutReader@read')
-                 ->everyMinute()
-                 ->name("ReadSendouts")
-                 ->withoutOverlapping();
+            ->everyMinute()
+            ->name("ReadSendouts")
+            ->withoutOverlapping();
 
         $schedule->call('App\Services\Walter\InterviewReader@read')
-                 ->everyMinute()
-                 ->name("ReadInterviews")
-                 ->withoutOverlapping();
+            ->everyMinute()
+            ->name("ReadInterviews")
+            ->withoutOverlapping();
 
         $schedule->call('App\Services\Walter\CandidateCodedReader@read')
-                 ->everyMinute()
-                 ->name("ReadCandidateCodeds")
-                 ->withoutOverlapping();
+            ->everyMinute()
+            ->name("ReadCandidateCodeds")
+            ->withoutOverlapping();
 
         $schedule->call('App\Services\Stats\CallReader@read')
-                 ->everyMinute()
-                 ->name("ReadCalls")
-                 ->withoutOverlapping();
+            ->everyMinute()
+            ->name("ReadCalls")
+            ->withoutOverlapping();
 
-        $schedule->call('App\Services\Stats\EmailReader@read')
-                 ->everyMinute()
-                 ->name("ReadEmails")
-                 ->withoutOverlapping();
+        $schedule->call('App\Services\Walter\EmailReader@read')
+            ->everyMinute()
+            ->name("ReadEmails")
+            ->withoutOverlapping();
     }
 
     /**
