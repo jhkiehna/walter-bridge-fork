@@ -4,7 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Services\KafkaConsumer;
-use App\Services\KafkaEvent;
+use App\KafkaEvent;
 
 class KafkaConsume extends Command
 {
@@ -36,11 +36,12 @@ class KafkaConsume extends Command
      *
      * @return void
      */
-    public function __construct(KafkaConsumer $consumer)
+    public function __construct(KafkaConsumer $consumer, KafkaEvent $kafkaEvent)
     {
         parent::__construct();
 
         $this->consumer = $consumer;
+        $this->kafkaEvent = $kafkaEvent;
     }
 
     /**
@@ -51,8 +52,14 @@ class KafkaConsume extends Command
     public function handle()
     {
         $this->consumer->start(
-            function ($topic, $partition, $message) {
-                (new KafkaEvent($topic, $message))->process();
+            function ($topic, $partition, $event) {
+                info("Received Kafka Event", [$topic, $partition, $event]);
+                try {
+                    $value = json_decode($event['message']['value'], JSON_THROW_ON_ERROR);
+                    $this->kafkaEvent->process($topic, $value);
+                } catch (\JsonException | \Exception $e) {
+                    \Log::error("Failed to decode Kafka message!", [$e, $event['message']['value']]);
+                }
             }
         );
     }

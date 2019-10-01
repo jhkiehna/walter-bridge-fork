@@ -16,7 +16,7 @@ class UserEventTest extends TestCase
         $fakeMessage = json_encode(
             [
                 'type' => 'create_user',
-                'user' => [
+                'data' => [
                     'origin_id' => 10,
                     'email' => 'fake_user@kimmel.com',
                     'walter_id' => 15,
@@ -62,7 +62,7 @@ class UserEventTest extends TestCase
         $fakeMessage = json_encode(
             [
             'type' => 'create_user',
-            'user' => [
+            'data' => [
                 'origin_id' => 10,
                 'email' => 'fake_user@kimmel.com',
                 'walter_id' => 15,

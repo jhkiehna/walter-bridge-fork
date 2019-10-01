@@ -29,7 +29,7 @@ class UserEvent
      */
     public function process()
     {
-        $data = $this->message->user;
+        $data = $this->message->data;
 
         $user = User::firstOrNew([ 'central_id' => $data->origin_id]);
 
