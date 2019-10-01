@@ -12,11 +12,11 @@ jobs:
       - run: sudo composer self-update
       - restore_cache:
           keys:
-            - composer-v1-{{ checksum "composer.lock" }}
-            - composer-v1-
+            - composer-v2-{{ checksum "composer.lock" }}
+            - composer-v2-
       - run: composer install -n --prefer-dist
       - save_cache:
-          key: composer-v1-{{ checksum "composer.lock" }}
+          key: composer-v2-{{ checksum "composer.lock" }}
           paths:
             - vendor
       - run: touch database/testing.sqlite && touch database/testing-stats.sqlite && touch database/walter-testing.sqlite
