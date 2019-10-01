@@ -17,7 +17,7 @@ class UserEventTest extends TestCase
             [
                 'type' => 'create_user',
                 'data' => [
-                    'origin_id' => 10,
+                    'id' => 10,
                     'email' => 'fake_user@kimmel.com',
                     'walter_id' => 15,
                     'intranet_id' => 19
@@ -63,7 +63,7 @@ class UserEventTest extends TestCase
             [
             'type' => 'create_user',
             'data' => [
-                'origin_id' => 10,
+                'id' => 10,
                 'email' => 'fake_user@kimmel.com',
                 'walter_id' => 15,
                 'intranet_id' => 19

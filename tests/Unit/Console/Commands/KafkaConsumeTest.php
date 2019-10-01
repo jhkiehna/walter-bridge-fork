@@ -62,10 +62,10 @@ class KafkaConsumeTest extends TestCase
      * @runInSeparateProcess
      * @preserveGlobalState disabled
      */
-    public function testItHandlesException()
+    public function testItHandlesNullEventException()
     {
         $this->mock(KafkaEvent::class, function ($mock) {
-            $mock->shouldReceive('process')->andThrow(\Exception::class);
+            $mock->shouldReceive('process')->andThrow(\App\Exceptions\NullMessageException::class);
         });
 
         $mock = Mockery::namedMock('App\Services\KafkaConsumer', 'Tests\Unit\Console\Commands\GoodKafkaConsumerEvent')

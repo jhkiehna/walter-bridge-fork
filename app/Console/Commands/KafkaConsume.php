@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\Services\KafkaConsumer;
 use App\KafkaEvent;
+use App\Exceptions\NullMessageException;
 
 class KafkaConsume extends Command
 {
@@ -55,9 +56,9 @@ class KafkaConsume extends Command
             function ($topic, $partition, $event) {
                 info("Received Kafka Event", [$topic, $partition, $event]);
                 try {
-                    $value = json_decode($event['message']['value'], JSON_THROW_ON_ERROR);
+                    $value = json_decode($event['message']['value'], false, JSON_THROW_ON_ERROR);
                     $this->kafkaEvent->process($topic, $value);
-                } catch (\JsonException | \Exception $e) {
+                } catch (\JsonException | NullMessageException $e) {
                     \Log::error("Failed to decode Kafka message!", [$e, $event['message']['value']]);
                 }
             }
