@@ -47,7 +47,7 @@ class EmailReader extends Reader
         if (!empty($latestEmail)) {
             $newRecords = collect(
                 $this->query
-                    ->where('updated_at', '>=', $latestEmail->updated_at->subMinutes(5))
+                    ->where('recordCard.updated_at', '>=', $latestEmail->updated_at->subMinutes(5))
                     ->get()
             );
         }
