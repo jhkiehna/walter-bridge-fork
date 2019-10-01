@@ -12,20 +12,11 @@ class KafkaEventTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testItThrowsExceptionWithBadMessage()
-    {
-        $this->expectException(\Exception::class);
-
-        Config::set("kafka.topics", ['kimmel']);
-
-        (new KafkaEvent('user', "{/This'': } is a bad message'}"))->process();
-    }
-
     public function testItReturnsFalseForUnspecifiedTopics()
     {
         Config::set("kafka.topics", ['test']);
 
-        $result = (new KafkaEvent('ignored', json_encode(["fake message"])))->process();
+        $result = (new KafkaEvent)->process('ignored', (object) ["fake message"]);
 
         $this->assertTrue(!$result);
     }
@@ -34,9 +25,9 @@ class KafkaEventTest extends TestCase
     {
         Config::set("kafka.topics", ['kimmel']);
 
-        $event = [
+        $event = (object) [
             "type" => "user",
-            "user" => [
+            "data" => (object) [
                 "origin_id" => 1,
                 "walter_id" => 1,
                 "intranet_id" => 1,
@@ -44,7 +35,7 @@ class KafkaEventTest extends TestCase
             ]
         ];
 
-        $result = (new KafkaEvent('kimmel', json_encode($event)))->process();
+        $result = (new KafkaEvent())->process('kimmel', $event);
 
         $this->assertTrue($result);
         $this->assertDatabaseHas(
@@ -62,9 +53,9 @@ class KafkaEventTest extends TestCase
     {
         Config::set("kafka.topics", ['kimmel']);
 
-        $event = [
+        $event = (object) [
             "type" => "user",
-            "user" => [
+            "data" => (object) [
                 "origin_id" => 1,
                 "walter_id" => 1,
                 "intranet_id" => 1,
@@ -72,7 +63,7 @@ class KafkaEventTest extends TestCase
             ]
         ];
 
-        $result = (new KafkaEvent('kimmel', json_encode($event)))->process();
+        $result = (new KafkaEvent())->process('kimmel', $event);
 
         $this->assertTrue($result);
         $this->assertDatabaseHas(
@@ -84,5 +75,13 @@ class KafkaEventTest extends TestCase
                 "email" => "fake@kimmel.com",
             ]
         );
+    }
+
+    public function testItThrowsExceptionWithNullMessage()
+    {
+        Config::set("kafka.topics", ['kimmel']);
+
+        $this->expectException(\Exception::class);
+        $result = (new KafkaEvent())->process('kimmel', null);
     }
 }

@@ -5,45 +5,25 @@ namespace App;
 class KafkaEvent
 {
     /**
-     * The topic the event was received from.
-     *
-     * @var string
-     */
-    protected $topic;
-
-    /**
-     * The message or event.
-     *
-     * @var []
-     */
-    protected $message;
-
-    public function __construct($topic, $message)
-    {
-        $this->topic = $topic;
-        $this->message = json_decode($message);
-
-        if (is_null($this->message)) {
-            throw new \Exception("Failed to decode message.");
-        }
-    }
-
-    /**
      * Process the event with the approiate
      * event class.
      *
      * @return void
      */
-    public function process()
+    public function process($topic, $message)
     {
+        if (is_null($message)) {
+            throw new \Exception("Failed to decode message.");
+        }
+
         // we are only currently interested in the expected topics
-        if (!in_array($this->topic, config("kafka.topics"))) {
+        if (!in_array($topic, config("kafka.topics"))) {
             return false;
         }
 
-        switch ($this->message->type) {
+        switch ($message->type) {
             case 'user':
-                (new UserEvent($this->message))->process();
+                (new UserEvent($message))->process();
                 break;
         }
 
