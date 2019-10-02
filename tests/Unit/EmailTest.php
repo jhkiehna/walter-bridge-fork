@@ -22,12 +22,15 @@ class EmailTest extends TestCase
     {
         Queue::fake();
 
-        $email = factory(Email::class)->create([
+        factory(Email::class)->create([
             'participant_email' => 'test@testing.com',
             'action' => 1,
             'details' => '<p>Test Body content</p>',
             'date' => Carbon::now(),
         ]);
+
+        $email = Email::first();
+
         $expectedEmailObject = (object) [
             'type' => 'email',
             'data' => (object) [

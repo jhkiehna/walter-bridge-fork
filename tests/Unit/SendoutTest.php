@@ -22,7 +22,10 @@ class SendoutTest extends TestCase
     {
         Queue::fake();
 
-        $sendout = factory(Sendout::class)->create();
+        factory(Sendout::class)->create();
+
+        $sendout = Sendout::first();
+
         $expectedSendoutObject = (object) [
             'type' => 'sendout',
             'data' => (object) [

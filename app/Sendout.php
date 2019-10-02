@@ -21,6 +21,19 @@ class Sendout extends Model
         'date'
     ];
 
+    protected $dates = [
+        'created_at',
+        'updated_at',
+        'date',
+    ];
+
+    protected $casts = [
+        'id' => 'integer',
+        'central_id' => 'integer',
+        'walter_consultant_id' => 'integer',
+        'walter_sendout_id' => 'integer',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class, 'central_id', 'central_id');

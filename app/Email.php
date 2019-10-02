@@ -24,6 +24,19 @@ class Email extends Model
         'date'
     ];
 
+    protected $dates = [
+        'created_at',
+        'updated_at',
+        'date',
+    ];
+
+    protected $casts = [
+        'id' => 'integer',
+        'central_id' => 'integer',
+        'walter_email_id' => 'integer',
+        'action' => 'integer',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class, 'central_id', 'central_id');

@@ -21,7 +21,10 @@ class CandidateCodedTest extends TestCase
     {
         Queue::fake();
 
-        $candidateCoded = factory(CandidateCoded::class)->create();
+        factory(CandidateCoded::class)->create();
+
+        $candidateCoded = CandidateCoded::first();
+
         $expectedCandidateCodedObject = (object) [
             'type' => 'candidate-coded',
             'data' => (object) [

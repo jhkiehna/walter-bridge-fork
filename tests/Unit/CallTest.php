@@ -88,12 +88,15 @@ class CallTest extends TestCase
     {
         Queue::fake();
 
-        $call = factory(Call::class)->states('national')->create([
+        factory(Call::class)->states('national')->create([
             'dialed_number' => 18282519900,
             'type' => 'Incoming',
             'duration' => 50,
             'date' => Carbon::now(),
         ]);
+
+        $call = Call::first();
+
         $expectedCallObject = (object) [
             'type' => 'call',
             'data' => (object) [
@@ -105,6 +108,7 @@ class CallTest extends TestCase
                 'created_at' => $call->date->toISOString(),
             ]
         ];
+
         $call->publishToKafka();
 
         Queue::assertPushed(PublishKafkaJob::class, function ($job) use ($expectedCallObject) {
