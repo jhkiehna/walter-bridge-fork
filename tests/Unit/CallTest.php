@@ -119,4 +119,22 @@ class CallTest extends TestCase
             }
         });
     }
+
+    public function testPhoneNumberParserDoesntThrowException()
+    {
+        Queue::fake();
+
+        factory(Call::class)->states('national')->create([
+            'dialed_number' => '',
+            'type' => 'Incoming',
+            'duration' => 50,
+            'date' => Carbon::now(),
+        ]);
+
+        $call = Call::first();
+
+        $call->publishToKafka();
+
+        Queue::assertNotPushed(PublishKafkaJob::class);
+    }
 }
