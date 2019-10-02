@@ -138,10 +138,16 @@ class Call extends Model
 
     private function parseNumber()
     {
-        if ($this->international == true) {
-            return $this->getPhoneUtility()->parse('+' . substr("{$this->dialed_number}", 2), "");
-        }
+        try {
+            if ($this->international == true) {
+                return $this->getPhoneUtility()->parse('+' . substr("{$this->dialed_number}", 2), "");
+            }
 
-        return $this->getPhoneUtility()->parse(substr("{$this->dialed_number}", 1), 'US');
+            return $this->getPhoneUtility()->parse(substr("{$this->dialed_number}", 1), 'US');
+        } catch (\Throwable $e) {
+            logger()->error("Failed to parse number for call with ID $this->id");
+            info($e->getMessage());
+            return false;
+        }
     }
 }
