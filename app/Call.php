@@ -145,7 +145,14 @@ class Call extends Model
             }
 
             return $this->getPhoneUtility()->parse(substr("{$this->dialed_number}", 1), 'US');
-        } catch (\Throwable $e) {
+        } catch (\libphonenumber\NumberParseException $e) {
+            \Sentry\configureScope(
+                function (\Sentry\State\Scope $scope) use ($e): void {
+                    $scope->setExtra('CallModel', json_encode($this));
+                }
+            );
+            app('sentry')->captureException($e);
+
             logger()->error("Failed to parse number for call with ID $this->id");
             info($e->getMessage());
         }
