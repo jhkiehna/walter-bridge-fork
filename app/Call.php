@@ -22,6 +22,20 @@ class Call extends Model
         'date',
     ];
 
+    protected $dates = [
+        'created_at',
+        'updated_at',
+        'date',
+    ];
+
+    protected $casts = [
+        'id' => 'integer',
+        'central_id' => 'integer',
+        'intranet_user_id' => 'integer',
+        'stats_call_id' => 'integer',
+        'duration' => 'integer',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class, 'central_id', 'central_id');

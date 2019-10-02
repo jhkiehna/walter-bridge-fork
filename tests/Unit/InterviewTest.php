@@ -21,7 +21,10 @@ class InterviewTest extends TestCase
     {
         Queue::fake();
 
-        $interview = factory(Interview::class)->create();
+        factory(Interview::class)->create();
+
+        $interview = Interview::first();
+
         $expectedInterviewObject = (object) [
             'type' => 'interview',
             'data' => (object) [
