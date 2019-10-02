@@ -119,4 +119,23 @@ class CallTest extends TestCase
             }
         });
     }
+
+    public function testThatWhenPhoneNumberParserThrowsExceptionItIsCaught()
+    {
+        $reflection_class = new \ReflectionClass(Call::class);
+        $reflection_method = $reflection_class->getMethod("parseNumber");
+        $reflection_method->setAccessible(true);
+
+        $badCall = factory(Call::class)->states('international')->create([
+            'dialed_number' => ''
+        ]);
+        $goodCall = factory(Call::class)->states('international')->create([
+            'dialed_number' => 1133140976300
+        ]);
+        $badLibPhoneNumberObject = $reflection_method->invoke($badCall, null);
+        $goodLibPhoneNumberObject = $reflection_method->invoke($goodCall, null);
+
+        $this->assertNull($badLibPhoneNumberObject);
+        $this->assertNotNull($goodLibPhoneNumberObject);
+    }
 }

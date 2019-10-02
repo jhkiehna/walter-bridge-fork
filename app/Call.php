@@ -33,6 +33,7 @@ class Call extends Model
         'central_id' => 'integer',
         'intranet_user_id' => 'integer',
         'stats_call_id' => 'integer',
+        'dialed_number' => 'integer',
         'duration' => 'integer',
     ];
 
@@ -138,10 +139,15 @@ class Call extends Model
 
     private function parseNumber()
     {
-        if ($this->international == true) {
-            return $this->getPhoneUtility()->parse('+' . substr("{$this->dialed_number}", 2), "");
-        }
+        try {
+            if ($this->international == true) {
+                return $this->getPhoneUtility()->parse('+' . substr("{$this->dialed_number}", 2), "");
+            }
 
-        return $this->getPhoneUtility()->parse(substr("{$this->dialed_number}", 1), 'US');
+            return $this->getPhoneUtility()->parse(substr("{$this->dialed_number}", 1), 'US');
+        } catch (\Throwable $e) {
+            logger()->error("Failed to parse number for call with ID $this->id");
+            info($e->getMessage());
+        }
     }
 }
