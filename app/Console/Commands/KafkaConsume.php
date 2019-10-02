@@ -59,7 +59,16 @@ class KafkaConsume extends Command
                     $value = json_decode($event['message']['value'], false, JSON_THROW_ON_ERROR);
                     $this->kafkaEvent->process($topic, $value);
                 } catch (\JsonException | NullMessageException $e) {
-                    \Log::error("Failed to decode Kafka message!", [$e, $event['message']['value']]);
+                    // report to sentry and continue
+                    \Sentry\configureScope(
+                        function (\Sentry\State\Scope $scope) use ($topic, $partition, $event): void {
+                            $scope->setExtra('topic', $topic);
+                            $scope->setExtra('partition', $partition);
+                            $scope->setExtra('event', $event);
+                        }
+                    );
+
+                    app('sentry')->captureException($e);
                 }
             }
         );
