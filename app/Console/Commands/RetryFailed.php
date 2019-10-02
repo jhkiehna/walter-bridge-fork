@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Email;
 use App\Sendout;
 use App\Interview;
 use App\FailedItem;
@@ -11,7 +12,7 @@ use Illuminate\Support\Collection;
 
 class RetryFailed extends Command
 {
-    protected $signature = 'retry-failed {recordType=all : accepted values: interviews | sendouts | coded | calls }';
+    protected $signature = 'retry-failed {recordType=all : accepted values: interviews | sendouts | coded | calls | emails}';
     protected $description = 'Attempt to process any fetched records that ended up in the failed items table';
 
     /**
@@ -48,6 +49,9 @@ class RetryFailed extends Command
                 break;
             case 'calls':
                 $failedItems = Call::failedItems();
+                break;
+            case 'emails':
+                $failedItems = Email::failedItems();
                 break;
             default:
                 $this->error("\n Unknown argument: {$this->argument('recordType')}\n");
