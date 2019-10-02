@@ -33,6 +33,7 @@ class Call extends Model
         'central_id' => 'integer',
         'intranet_user_id' => 'integer',
         'stats_call_id' => 'integer',
+        'dialed_number' => 'integer',
         'duration' => 'integer',
     ];
 
