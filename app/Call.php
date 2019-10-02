@@ -147,7 +147,6 @@ class Call extends Model
         } catch (\Throwable $e) {
             logger()->error("Failed to parse number for call with ID $this->id");
             info($e->getMessage());
-            return false;
         }
     }
 }
