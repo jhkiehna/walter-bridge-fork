@@ -7,12 +7,14 @@
 -   `composer install`
 -   `cp .env.example .env`
 -   Edit environment variables in .env appropriately; fill in DB_WALTER and DB_STATS env vars
+-   Add Sentry environment variable `SENTRY_LARAVEL_DSN=`
 -   Set redis environment variables
     ```
       QUEUE_CONNECTION=redis
       REDIS_HOST=
       REDIS_PASSWORD=
       REDIS_PORT=
+      RED_PREFIX=
     ```
 -   Set up systemd services for `php artisan kafka:consume` and `php artisan queue:work`
 
