@@ -14,7 +14,7 @@
       REDIS_HOST=
       REDIS_PASSWORD=
       REDIS_PORT=
-      RED_PREFIX=
+      REDIS_PREFIX=
     ```
 -   Set up systemd services for `php artisan kafka:consume` and `php artisan queue:work`
 
