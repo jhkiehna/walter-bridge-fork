@@ -31,7 +31,7 @@ class UserEvent
     {
         $data = $this->message->data;
 
-        $user = User::firstOrNew([ 'central_id' => $data->origin_id]);
+        $user = User::firstOrNew([ 'central_id' => $data->id]);
 
         $user->email = $data->email;
         $user->walter_id = $data->walter_id;

@@ -2,6 +2,8 @@
 
 namespace App;
 
+use App\Exceptions\NullMessageException;
+
 class KafkaEvent
 {
     /**
@@ -13,7 +15,7 @@ class KafkaEvent
     public function process($topic, $message)
     {
         if (is_null($message)) {
-            throw new \Exception("Failed to decode message.");
+            throw new NullMessageException("Failed to decode message.");
         }
 
         // we are only currently interested in the expected topics

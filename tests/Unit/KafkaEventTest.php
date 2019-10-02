@@ -28,7 +28,7 @@ class KafkaEventTest extends TestCase
         $event = (object) [
             "type" => "user",
             "data" => (object) [
-                "origin_id" => 1,
+                "id" => 1,
                 "walter_id" => 1,
                 "intranet_id" => 1,
                 "email" => "fake@kimmel.com",
@@ -56,7 +56,7 @@ class KafkaEventTest extends TestCase
         $event = (object) [
             "type" => "user",
             "data" => (object) [
-                "origin_id" => 1,
+                "id" => 1,
                 "walter_id" => 1,
                 "intranet_id" => 1,
                 "email" => "fake@kimmel.com",
@@ -81,7 +81,7 @@ class KafkaEventTest extends TestCase
     {
         Config::set("kafka.topics", ['kimmel']);
 
-        $this->expectException(\Exception::class);
+        $this->expectException(\App\Exceptions\NullMessageException::class);
         $result = (new KafkaEvent())->process('kimmel', null);
     }
 }
