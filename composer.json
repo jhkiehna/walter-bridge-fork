@@ -13,7 +13,8 @@
         "giggsey/libphonenumber-for-php": "^8.10",
         "laravel/framework": "5.8.*",
         "laravel/tinker": "^1.0",
-        "nmred/kafka-php": "dev-master"
+        "nmred/kafka-php": "dev-master",
+        "sentry/sentry-laravel": "1.3.1"
     },
     "require-dev": {
         "beyondcode/laravel-dump-server": "^1.0",
