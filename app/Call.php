@@ -145,7 +145,7 @@ class Call extends Model
             }
 
             return $this->getPhoneUtility()->parse(substr("{$this->dialed_number}", 1), 'US');
-        } catch (\Throwable $e) {
+        } catch (\libphonenumber\NumberParseException $e) {
             logger()->error("Failed to parse number for call with ID $this->id");
             info($e->getMessage());
         }
