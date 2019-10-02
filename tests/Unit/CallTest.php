@@ -120,21 +120,22 @@ class CallTest extends TestCase
         });
     }
 
-    public function testPhoneNumberParserDoesntThrowException()
+    public function testThatWhenPhoneNumberParserThrowsExceptionItIsCaught()
     {
-        Queue::fake();
+        $reflection_class = new \ReflectionClass(Call::class);
+        $reflection_method = $reflection_class->getMethod("parseNumber");
+        $reflection_method->setAccessible(true);
 
-        factory(Call::class)->states('national')->create([
-            'dialed_number' => '',
-            'type' => 'Incoming',
-            'duration' => 50,
-            'date' => Carbon::now(),
+        $badCall = factory(Call::class)->states('international')->create([
+            'dialed_number' => ''
         ]);
+        $goodCall = factory(Call::class)->states('international')->create([
+            'dialed_number' => 1133140976300
+        ]);
+        $badLibPhoneNumberObject = $reflection_method->invoke($badCall, null);
+        $goodLibPhoneNumberObject = $reflection_method->invoke($goodCall, null);
 
-        $call = Call::first();
-
-        $call->publishToKafka();
-
-        Queue::assertNotPushed(PublishKafkaJob::class);
+        $this->assertNull($badLibPhoneNumberObject);
+        $this->assertNotNull($goodLibPhoneNumberObject);
     }
 }
