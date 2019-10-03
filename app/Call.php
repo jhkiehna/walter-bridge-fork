@@ -64,7 +64,7 @@ class Call extends Model
                 'central_id' => $centralId ?? 1,
                 'intranet_user_id' => $call->user_id,
                 'valid' => $call->valid,
-                'concatenated_number' => $call->concatenated_number,
+                'concatenated_number' => $call->areacode . $call->phone_number,
                 'dialed_number' => $call->dialed_number,
                 'international' => $call->international,
                 'type' => $call->type,
