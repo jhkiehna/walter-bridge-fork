@@ -15,8 +15,8 @@ class Call extends Model
         'intranet_user_id',
         'stats_call_id',
         'valid',
-        'concatenated_number',
         'dialed_number',
+        'concatenated_number',
         'international',
         'type',
         'duration',
@@ -35,6 +35,7 @@ class Call extends Model
         'intranet_user_id' => 'integer',
         'stats_call_id' => 'integer',
         'dialed_number' => 'integer',
+        'concatenated_number' => 'integer',
         'duration' => 'integer',
     ];
 
