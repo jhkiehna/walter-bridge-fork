@@ -146,12 +146,12 @@ class CallTest extends TestCase
         $reflection_method = $reflection_class->getMethod("parseNumber");
         $reflection_method->setAccessible(true);
 
-        $goodCall = factory(Call::class)->states('international')->create([
+        $call = factory(Call::class)->states('international')->create([
             'dialed_number' => 0,
             'concatenated_number' => 3140976300
         ]);
-        $goodLibPhoneNumberObject = $reflection_method->invoke($goodCall, null);
+        $libPhoneNumberObject = $reflection_method->invoke($call, null);
 
-        $this->assertNotNull($goodLibPhoneNumberObject);
+        $this->assertNotNull($libPhoneNumberObject);
     }
 }
