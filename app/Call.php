@@ -15,6 +15,7 @@ class Call extends Model
         'intranet_user_id',
         'stats_call_id',
         'valid',
+        'concatenated_number',
         'dialed_number',
         'international',
         'type',
@@ -62,6 +63,7 @@ class Call extends Model
                 'central_id' => $centralId ?? 1,
                 'intranet_user_id' => $call->user_id,
                 'valid' => $call->valid,
+                'concatenated_number' => $call->concatenated_number,
                 'dialed_number' => $call->dialed_number,
                 'international' => $call->international,
                 'type' => $call->type,
@@ -139,12 +141,18 @@ class Call extends Model
 
     private function parseNumber()
     {
+        $phoneNumber = $this->dialed_number;
+
+        if ($phoneNumber == 0) {
+            $phoneNumber = $this->concatenated_number;
+        }
+
         try {
             if ($this->international == true) {
-                return $this->getPhoneUtility()->parse('+' . substr("{$this->dialed_number}", 2), "");
+                return $this->getPhoneUtility()->parse('+' . substr("{$phoneNumber}", 2), "");
             }
 
-            return $this->getPhoneUtility()->parse(substr("{$this->dialed_number}", 1), 'US');
+            return $this->getPhoneUtility()->parse(substr("{$phoneNumber}", 1), 'US');
         } catch (\libphonenumber\NumberParseException $e) {
             \Sentry\configureScope(
                 function (\Sentry\State\Scope $scope) use ($e): void {

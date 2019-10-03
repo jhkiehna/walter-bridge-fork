@@ -31,6 +31,8 @@ class CallReaderTest extends TestCase
                 ->insert([
                     'user_id' => $users[$i]->intranet_id ?? 1,
                     'valid' => true,
+                    'areacode' => rand(111, 999),
+                    'phone_number' => rand(1111111, 9999999),
                     'dialed_number' => rand(1111111111, 9999999999),
                     'international' => false,
                     'type' => $type == 0 ? 'Incoming' : $type == 1 ? 'Outgoing' : 'Transfer',
@@ -93,7 +95,7 @@ class CallReaderTest extends TestCase
             ->where('id', 1)
             ->update([
                 'dialed_number' => 5555555555,
-                'type' => 'Transfer',
+                'type' => 'Incoming',
                 'duration' => 0,
                 'updated_at' => Carbon::today()
             ]);
@@ -102,7 +104,7 @@ class CallReaderTest extends TestCase
         $localUpdatedCall = Call::where('stats_call_id', 1)->first();
 
         $this->assertEquals($localUpdatedCall->dialed_number, 5555555555);
-        $this->assertEquals($localUpdatedCall->type, 'Transfer');
+        $this->assertEquals($localUpdatedCall->type, 'Incoming');
         $this->assertEquals($localUpdatedCall->duration, 0);
     }
 }

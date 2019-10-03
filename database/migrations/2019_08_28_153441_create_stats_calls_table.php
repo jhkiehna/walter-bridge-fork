@@ -20,6 +20,8 @@ class CreateStatsCallsTable extends Migration
                 $table->bigIncrements('id');
                 $table->bigInteger('user_id')->unsigned();
                 $table->boolean('valid');
+                $table->bigInteger('areacode')->unsigned();
+                $table->bigInteger('phone_number')->unsigned();
                 $table->bigInteger('dialed_number')->unsigned();
                 $table->boolean('international');
                 $table->enum('type', ['Incoming', 'Outgoing', 'Transfer'])->nullable();

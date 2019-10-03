@@ -127,7 +127,8 @@ class CallTest extends TestCase
         $reflection_method->setAccessible(true);
 
         $badCall = factory(Call::class)->states('international')->create([
-            'dialed_number' => ''
+            'dialed_number' => '',
+            'concatenated_number' => 111
         ]);
         $goodCall = factory(Call::class)->states('international')->create([
             'dialed_number' => 1133140976300
@@ -136,6 +137,21 @@ class CallTest extends TestCase
         $goodLibPhoneNumberObject = $reflection_method->invoke($goodCall, null);
 
         $this->assertNull($badLibPhoneNumberObject);
+        $this->assertNotNull($goodLibPhoneNumberObject);
+    }
+
+    public function testThatParseNumberUsesTheConcatenatedNumberWhenDialedNumberIsZero()
+    {
+        $reflection_class = new \ReflectionClass(Call::class);
+        $reflection_method = $reflection_class->getMethod("parseNumber");
+        $reflection_method->setAccessible(true);
+
+        $goodCall = factory(Call::class)->states('international')->create([
+            'dialed_number' => 0,
+            'concatenated_number' => 3140976300
+        ]);
+        $goodLibPhoneNumberObject = $reflection_method->invoke($goodCall, null);
+
         $this->assertNotNull($goodLibPhoneNumberObject);
     }
 }
