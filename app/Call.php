@@ -144,6 +144,10 @@ class Call extends Model
 
     private function parseNumber()
     {
+        if ($this->dialed_number == 0 && $this->concatenated_number == 0) {
+            return;
+        }
+
         try {
             if ($this->international == true) {
                 if ($this->dialed_number == 0) {
