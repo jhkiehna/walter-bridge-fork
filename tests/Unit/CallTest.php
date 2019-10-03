@@ -84,7 +84,43 @@ class CallTest extends TestCase
         $this->assertEquals($countryName2, "France");
     }
 
-    public function testPublishToKafkaMethodCreatesTheCorrectObject()
+    public function testPublishToKafkaMethodCreatesTheCorrectObjectForInternationalNumber()
+    {
+        Queue::fake();
+
+        factory(Call::class)->states('international')->create([
+            'dialed_number' => 11441946695420,
+            'type' => 'Incoming',
+            'duration' => 50,
+            'date' => Carbon::now(),
+        ]);
+
+        $call = Call::first();
+
+        $expectedCallObject = (object) [
+            'type' => 'call',
+            'data' => (object) [
+                'id' => $call->stats_call_id,
+                'user_id' => $call->central_id,
+                'participant_number' => '+441946695420',
+                'incoming' => true,
+                'duration' => 50,
+                'created_at' => $call->date->toISOString(),
+            ]
+        ];
+
+        $call->publishToKafka();
+
+        Queue::assertPushed(PublishKafkaJob::class, function ($job) use ($expectedCallObject) {
+            if (json_encode($job->objectToPublish) == json_encode($expectedCallObject)) {
+                return true;
+            } else {
+                return false;
+            }
+        });
+    }
+
+    public function testPublishToKafkaMethodCreatesTheCorrectObjectForNationalNumber()
     {
         Queue::fake();
 
@@ -128,7 +164,7 @@ class CallTest extends TestCase
 
         $badCall = factory(Call::class)->states('international')->create([
             'dialed_number' => '',
-            'concatenated_number' => 111
+            'concatenated_number' => 1
         ]);
         $goodCall = factory(Call::class)->states('international')->create([
             'dialed_number' => 1133140976300
@@ -153,5 +189,72 @@ class CallTest extends TestCase
         $libPhoneNumberObject = $reflection_method->invoke($call, null);
 
         $this->assertNotNull($libPhoneNumberObject);
+    }
+
+    public function testThatNationalNumberParsesCorrectlyWhenUsingConcatenatedNumber()
+    {
+        $reflection_class = new \ReflectionClass(Call::class);
+        $reflection_method = $reflection_class->getMethod("parseNumber");
+        $reflection_method->setAccessible(true);
+
+        $call = factory(Call::class)->states('national')->create([
+            'dialed_number' => 0,
+            'concatenated_number' => 8282519900
+        ]);
+        $libPhoneNumberObject = $reflection_method->invoke($call, null);
+
+        $this->assertNotNull($libPhoneNumberObject);
+    }
+
+    public function testThatInternationalNumberParsesCorrectlyWhenUsingConcatenatedNumber()
+    {
+        $reflection_class = new \ReflectionClass(Call::class);
+        $reflection_method = $reflection_class->getMethod("parseNumber");
+        $reflection_method->setAccessible(true);
+
+        $call = factory(Call::class)->states('international')->create([
+            'dialed_number' => 0,
+            'concatenated_number' => 2675805434
+        ]);
+        $libPhoneNumberObject = $reflection_method->invoke($call, null);
+
+        $this->assertNotNull($libPhoneNumberObject);
+    }
+
+    public function testPublishToKafkaMethodCreatesTheCorrectObjectWithConcatenatedNumberForNationalCall()
+    {
+        Queue::fake();
+
+        factory(Call::class)->states('national')->create([
+            'dialed_number' => 0,
+            'concatenated_number' => 8282519900,
+            'type' => 'Incoming',
+            'duration' => 50,
+            'date' => Carbon::now(),
+        ]);
+
+        $nationalCall = Call::first();
+
+        $expectedNationalCallObject = (object) [
+            'type' => 'call',
+            'data' => (object) [
+                'id' => $nationalCall->stats_call_id,
+                'user_id' => $nationalCall->central_id,
+                'participant_number' => '+18282519900',
+                'incoming' => true,
+                'duration' => 50,
+                'created_at' => $nationalCall->date->toISOString(),
+            ]
+        ];
+
+        $nationalCall->publishToKafka();
+
+        Queue::assertPushed(PublishKafkaJob::class, function ($job) use ($expectedNationalCallObject) {
+            if (json_encode($job->objectToPublish) == json_encode($expectedNationalCallObject)) {
+                return true;
+            } else {
+                return false;
+            }
+        });
     }
 }

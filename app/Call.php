@@ -142,18 +142,24 @@ class Call extends Model
 
     private function parseNumber()
     {
-        $phoneNumber = $this->dialed_number;
-
-        if ($phoneNumber == 0) {
-            $phoneNumber = $this->concatenated_number;
-        }
-
         try {
             if ($this->international == true) {
-                return $this->getPhoneUtility()->parse('+' . substr("{$phoneNumber}", 2), "");
+                if ($this->dialed_number == 0) {
+                    $phoneNumber = $this->concatenated_number;
+                } else {
+                    $phoneNumber = substr("{$this->dialed_number}", 2);
+                }
+
+                return $this->getPhoneUtility()->parse("+$phoneNumber", "");
             }
 
-            return $this->getPhoneUtility()->parse(substr("{$phoneNumber}", 1), 'US');
+            if ($this->dialed_number == 0) {
+                $phoneNumber = $this->concatenated_number;
+            } else {
+                $phoneNumber = substr("{$this->dialed_number}", 1);
+            }
+
+            return $this->getPhoneUtility()->parse("$phoneNumber", 'US');
         } catch (\libphonenumber\NumberParseException $e) {
             \Sentry\configureScope(
                 function (\Sentry\State\Scope $scope) use ($e): void {
