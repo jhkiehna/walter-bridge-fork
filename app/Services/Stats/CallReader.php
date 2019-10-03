@@ -26,6 +26,7 @@ class CallReader extends Reader
                 'user_id',
                 'valid',
                 'dialed_number',
+                'CONCAT(areacode, phone_number) as concatenated_number',
                 'international',
                 'type',
                 'date',
@@ -33,7 +34,8 @@ class CallReader extends Reader
                 'raw',
                 'updated_at'
             ])
-            ->where('raw', '!=', 'NEXUS');
+            ->where('raw', '!=', 'NEXUS')
+            ->where('type', '!=', 'Transfer');
     }
 
     public function getNewRecords()

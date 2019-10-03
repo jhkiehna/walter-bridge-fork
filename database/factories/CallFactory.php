@@ -30,6 +30,7 @@ $factory->define(Call::class, function (Faker $faker) {
         'dialed_number' => $international
             ? (int) "11{$faker->numberBetween($min = 111111111111,$max = 999999999999)}"
             : $faker->numberBetween($min = 11111111111, $max = 19999999999),
+        'concatenated_number' => $faker->numberBetween($min = 1111111111, $max = 9999999999),
         'duration' => $faker->numberBetween($min = 1, $max = 9000),
         'date' => Carbon::now(),
     ];

@@ -16,6 +16,7 @@ class Call extends Model
         'stats_call_id',
         'valid',
         'dialed_number',
+        'concatenated_number',
         'international',
         'type',
         'duration',
@@ -34,6 +35,7 @@ class Call extends Model
         'intranet_user_id' => 'integer',
         'stats_call_id' => 'integer',
         'dialed_number' => 'integer',
+        'concatenated_number' => 'integer',
         'duration' => 'integer',
     ];
 
@@ -62,6 +64,7 @@ class Call extends Model
                 'central_id' => $centralId ?? 1,
                 'intranet_user_id' => $call->user_id,
                 'valid' => $call->valid,
+                'concatenated_number' => $call->concatenated_number,
                 'dialed_number' => $call->dialed_number,
                 'international' => $call->international,
                 'type' => $call->type,
@@ -141,10 +144,22 @@ class Call extends Model
     {
         try {
             if ($this->international == true) {
-                return $this->getPhoneUtility()->parse('+' . substr("{$this->dialed_number}", 2), "");
+                if ($this->dialed_number == 0) {
+                    $phoneNumber = $this->concatenated_number;
+                } else {
+                    $phoneNumber = substr("{$this->dialed_number}", 2);
+                }
+
+                return $this->getPhoneUtility()->parse("+$phoneNumber", "");
             }
 
-            return $this->getPhoneUtility()->parse(substr("{$this->dialed_number}", 1), 'US');
+            if ($this->dialed_number == 0) {
+                $phoneNumber = $this->concatenated_number;
+            } else {
+                $phoneNumber = substr("{$this->dialed_number}", 1);
+            }
+
+            return $this->getPhoneUtility()->parse("$phoneNumber", 'US');
         } catch (\libphonenumber\NumberParseException $e) {
             \Sentry\configureScope(
                 function (\Sentry\State\Scope $scope) use ($e): void {
