@@ -25,7 +25,10 @@ class EmailReader extends Reader
                 $join->on("recordCard.RcID", "=", "person_recordCard.record")
                     ->whereIn("recordCard.action", [1, 2]);
             })
-            ->join("person_email", "person_recordCard.person", "=", "person_email.person")
+            ->join("person_email", function ($join) {
+                $join->on("person_recordCard.person", "=", "person_email.person");
+                $join->on("person_email.isPreferred", "=", 1);
+            })
             ->join("emailAddress", "emailAddress.emid", "=", "person_email.email")
             ->join("users", "users.uID", "=", "recordCard.userID")
             ->select([
