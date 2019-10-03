@@ -58,13 +58,15 @@ class Call extends Model
     {
         $centralId = self::translateIntranetUserIdToCentralUserId($call->user_id);
 
+        $concatenated_number = $call->areacode . $call->phone_number;
+
         $localCall = self::updateOrCreate(
             ['stats_call_id' => $call->id],
             [
                 'central_id' => $centralId ?? 1,
                 'intranet_user_id' => $call->user_id,
                 'valid' => $call->valid,
-                'concatenated_number' => $call->areacode . $call->phone_number,
+                'concatenated_number' => empty($concatenated_number) ? 0 : $concatenated_number,
                 'dialed_number' => $call->dialed_number,
                 'international' => $call->international,
                 'type' => $call->type,
