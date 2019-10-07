@@ -119,7 +119,7 @@ class Call extends Model
                         $libPhoneNumberObject,
                         PhoneNumberFormat::E164
                     ),
-                    'incoming' => $this->type == 'Incoming' ? true : false,
+                    'incoming' => $this->type == 'Outgoing' ? false : true,
                     'duration' => $this->duration,
                     'created_at' => $this->date->toISOString(),
                 ]
@@ -166,12 +166,12 @@ class Call extends Model
 
             return $this->getPhoneUtility()->parse("$phoneNumber", 'US');
         } catch (\libphonenumber\NumberParseException $e) {
-            \Sentry\configureScope(
-                function (\Sentry\State\Scope $scope) use ($e): void {
-                    $scope->setExtra('CallModel', json_encode($this));
-                }
-            );
-            app('sentry')->captureException($e);
+            // \Sentry\configureScope(
+            //     function (\Sentry\State\Scope $scope) use ($e): void {
+            //         $scope->setExtra('CallModel', json_encode($this));
+            //     }
+            // );
+            // app('sentry')->captureException($e);
 
             logger()->error("Failed to parse number for call with ID $this->id");
             info($e->getMessage());
