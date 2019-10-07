@@ -67,7 +67,9 @@ class Email extends Model
             return $localEmail;
         }
 
-        FailedItem::make()->failable()->associate($localEmail)->save();
+        if ($centralId == 1) {
+            FailedItem::make()->failable()->associate($localEmail)->save();
+        }
     }
 
     public function publishToKafka()

@@ -61,7 +61,9 @@ class Sendout extends Model
             return $localSendout;
         }
 
-        FailedItem::make()->failable()->associate($localSendout)->save();
+        if ($centralId == 1) {
+            FailedItem::make()->failable()->associate($localSendout)->save();
+        }
     }
 
     public function publishToKafka()

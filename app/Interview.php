@@ -61,7 +61,9 @@ class Interview extends Model
             return $localInterview;
         }
 
-        FailedItem::make()->failable()->associate($localInterview)->save();
+        if ($centralId == 1) {
+            FailedItem::make()->failable()->associate($localInterview)->save();
+        }
     }
 
     public function publishToKafka()

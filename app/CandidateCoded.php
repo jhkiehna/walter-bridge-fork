@@ -62,7 +62,9 @@ class CandidateCoded extends Model
             return $localCandidateCoded;
         }
 
-        FailedItem::make()->failable()->associate($localCandidateCoded)->save();
+        if ($centralId == 1) {
+            FailedItem::make()->failable()->associate($localCandidateCoded)->save();
+        }
     }
 
     public function publishToKafka()

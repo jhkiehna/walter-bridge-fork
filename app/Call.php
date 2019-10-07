@@ -152,7 +152,11 @@ class Call extends Model
                 if ($this->dialed_number == 0) {
                     $phoneNumber = $this->concatenated_number;
                 } else {
-                    $phoneNumber = substr("{$this->dialed_number}", 2);
+                    if ($this->type == 'Incoming') {
+                        $phoneNumber = $this->dialed_number;
+                    } else {
+                        $phoneNumber = substr("{$this->dialed_number}", 2);
+                    }
                 }
 
                 return $this->getPhoneUtility()->parse("+$phoneNumber", "");
@@ -161,7 +165,11 @@ class Call extends Model
             if ($this->dialed_number == 0) {
                 $phoneNumber = $this->concatenated_number;
             } else {
-                $phoneNumber = substr("{$this->dialed_number}", 1);
+                if ($this->type == 'Incoming') {
+                    $phoneNumber = $this->dialed_number;
+                } else {
+                    $phoneNumber = substr("{$this->dialed_number}", 1);
+                }
             }
 
             return $this->getPhoneUtility()->parse("$phoneNumber", 'US');
