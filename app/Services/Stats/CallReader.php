@@ -35,8 +35,7 @@ class CallReader extends Reader
                 'raw',
                 'updated_at'
             ])
-            ->where('raw', '!=', 'NEXUS')
-            ->where('type', '!=', 'Transfer');
+            ->where('raw', '!=', 'NEXUS');
     }
 
     public function getNewRecords()

@@ -36,7 +36,7 @@ class CallReaderTest extends TestCase
                     'phone_number' => rand(1111111, 9999999),
                     'dialed_number' => rand(1111111111, 9999999999),
                     'international' => false,
-                    'type' => $type == 0 ? 'Incoming' : 'Outgoing',
+                    'type' => $type == 0 ? 'Incoming' : $type == 1 ? 'Outgoing' : 'Transfer',
                     'date' => Carbon::now()->subDays($i),
                     'duration' => rand(1, 1000),
                     'raw' => '',
