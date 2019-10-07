@@ -60,4 +60,12 @@ class CallReader extends Reader
             ->where('date', '>=', $startDate)
             ->where('date', '<=', $endDate);
     }
+
+    public function getTransferOnlyQuery(Carbon $startDate, Carbon $endDate)
+    {
+        return $this->query
+            ->where('date', '>=', $startDate)
+            ->where('date', '<=', $endDate)
+            ->where('type', '=', 'Transfer');
+    }
 }
