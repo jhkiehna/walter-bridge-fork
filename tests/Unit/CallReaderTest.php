@@ -6,6 +6,7 @@ use App\User;
 use App\Call;
 use Carbon\Carbon;
 use Tests\TestCase;
+use App\FailedItem;
 use App\Services\Stats\CallReader;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Artisan;
@@ -24,7 +25,7 @@ class CallReaderTest extends TestCase
         $users = User::all();
 
         for ($i = 1; $i <= 14; $i++) {
-            $type = rand(0, 2);
+            $type = rand(0, 1);
 
             DB::connection('sqlite_stats_test')
                 ->table('calls')
@@ -35,7 +36,7 @@ class CallReaderTest extends TestCase
                     'phone_number' => rand(1111111, 9999999),
                     'dialed_number' => rand(1111111111, 9999999999),
                     'international' => false,
-                    'type' => $type == 0 ? 'Incoming' : $type == 1 ? 'Outgoing' : 'Transfer',
+                    'type' => $type == 0 ? 'Incoming' : 'Outgoing',
                     'date' => Carbon::now()->subDays($i),
                     'duration' => rand(1, 1000),
                     'raw' => '',
@@ -106,5 +107,22 @@ class CallReaderTest extends TestCase
         $this->assertEquals($localUpdatedCall->dialed_number, 5555555555);
         $this->assertEquals($localUpdatedCall->type, 'Incoming');
         $this->assertEquals($localUpdatedCall->duration, 0);
+    }
+
+    public function testItCanCreateFailedItems()
+    {
+        factory(User::class)->create([
+            'central_id' => 1
+        ]);
+        factory(Call::class)->create([
+            'central_id' => 1,
+            'updated_at' => Carbon::now()->subWeeks(3),
+        ]);
+
+        (new CallReader)->read();
+
+        $failed = FailedItem::where('failable_type', 'App\Call')->get();
+
+        $this->assertFalse($failed->isEmpty());
     }
 }

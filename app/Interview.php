@@ -51,14 +51,13 @@ class Interview extends Model
         $localInterview = self::updateOrCreate(
             ['walter_interview_id' => $interview->id,],
             [
-                'central_id' => $centralId ?? 1,
-                'walter_consultant_id' => (int) $interview->consultant,
-                'date' => $interview->date,
-                'updated_at' => $interview->updated_at
+                'central_id' => $centralId,
+                'walter_consultant_id' => $interview->consultant,
+                'date' => $interview->date
             ]
         );
 
-        if ($centralId) {
+        if ($centralId != 1 && ($localInterview->wasRecentlyCreated() == true || !empty($localInterview->getChanges()))) {
             return $localInterview;
         }
 

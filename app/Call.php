@@ -63,7 +63,7 @@ class Call extends Model
         $localCall = self::updateOrCreate(
             ['stats_call_id' => $call->id],
             [
-                'central_id' => $centralId ?? 1,
+                'central_id' => $centralId,
                 'intranet_user_id' => $call->user_id,
                 'valid' => $call->valid,
                 'concatenated_number' => empty($concatenated_number) ? 0 : $concatenated_number,
@@ -72,11 +72,10 @@ class Call extends Model
                 'type' => $call->type,
                 'date' => $call->date,
                 'duration' => $call->duration,
-                'updated_at' => $call->updated_at
             ]
         );
 
-        if ($centralId) {
+        if ($centralId != 1 && ($localCall->wasRecentlyCreated() == true || !empty($localCall->getChanges()))) {
             return $localCall;
         }
 
@@ -87,7 +86,7 @@ class Call extends Model
     {
         $user = User::where('intranet_id', $intranetId)->first();
 
-        return $user ? $user->central_id : null;
+        return $user ? $user->central_id : 1;
     }
 
     public function updateCentralId()
