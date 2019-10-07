@@ -49,8 +49,6 @@ class FetchTransferCalls extends Command
         $query->orderBy($this->reader->primaryKey)->chunk(500, function ($dataChunk) use ($progressBar) {
             if (!empty($dataChunk)) {
                 $dataChunk->each(function ($record) use ($progressBar) {
-                    // dd($record);
-
                     $localRecord = $this->reader->localModel::writeWithForeignRecord($record);
 
                     if ($localRecord) {
