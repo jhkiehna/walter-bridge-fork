@@ -75,7 +75,7 @@ class Call extends Model
             ]
         );
 
-        if ($centralId != 1 && ($localCall->wasRecentlyCreated() == true || !empty($localCall->getChanges()))) {
+        if ($centralId != 1 && ($localCall->wasRecentlyCreated || !empty($localCall->getChanges()))) {
             return $localCall;
         }
 

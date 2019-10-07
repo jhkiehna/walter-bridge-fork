@@ -57,7 +57,7 @@ class Interview extends Model
             ]
         );
 
-        if ($centralId != 1 && ($localInterview->wasRecentlyCreated() == true || !empty($localInterview->getChanges()))) {
+        if ($centralId != 1 && ($localInterview->wasRecentlyCreated || !empty($localInterview->getChanges()))) {
             return $localInterview;
         }
 

@@ -63,7 +63,7 @@ class Email extends Model
             ]
         );
 
-        if ($centralId != 1 && ($localEmail->wasRecentlyCreated() == true || !empty($localEmail->getChanges()))) {
+        if ($centralId != 1 && ($localEmail->wasRecentlyCreated || !empty($localEmail->getChanges()))) {
             return $localEmail;
         }
 

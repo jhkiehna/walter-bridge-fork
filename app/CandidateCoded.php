@@ -58,7 +58,7 @@ class CandidateCoded extends Model
             ]
         );
 
-        if ($centralId != 1 && ($localCandidateCoded->wasRecentlyCreated() == true || !empty($localCandidateCoded->getChanges()))) {
+        if ($centralId != 1 && ($localCandidateCoded->wasRecentlyCreated || !empty($localCandidateCoded->getChanges()))) {
             return $localCandidateCoded;
         }
 

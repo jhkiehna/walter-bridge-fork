@@ -57,7 +57,7 @@ class Sendout extends Model
             ]
         );
 
-        if ($centralId != 1 && ($localSendout->wasRecentlyCreated() == true || !empty($localSendout->getChanges()))) {
+        if ($centralId != 1 && ($localSendout->wasRecentlyCreated || !empty($localSendout->getChanges()))) {
             return $localSendout;
         }
 
