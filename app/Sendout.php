@@ -51,14 +51,13 @@ class Sendout extends Model
         $localSendout = self::updateOrCreate(
             ['walter_sendout_id' => $sendout->id],
             [
-                'central_id' => $centralId ?? 1,
-                'walter_consultant_id' => (int) $sendout->consultant,
-                'date' => $sendout->date,
-                'updated_at' => $sendout->updated_at
+                'central_id' => $centralId,
+                'walter_consultant_id' => $sendout->consultant,
+                'date' => $sendout->date
             ]
         );
 
-        if ($centralId) {
+        if ($centralId != 1 && ($localSendout->wasRecentlyCreated || !empty($localSendout->getChanges()))) {
             return $localSendout;
         }
 

@@ -52,14 +52,13 @@ class CandidateCoded extends Model
         $localCandidateCoded = self::updateOrCreate(
             ['walter_coded_id' => $candidateCoded->id],
             [
-                'central_id' => $centralId ?? 1,
-                'walter_consultant_id' => (int) $candidateCoded->consultant,
-                'date' => $candidateCoded->date,
-                'updated_at' => $candidateCoded->updated_at
+                'central_id' => $centralId,
+                'walter_consultant_id' => $candidateCoded->consultant,
+                'date' => $candidateCoded->date
             ]
         );
 
-        if ($centralId) {
+        if ($centralId != 1 && ($localCandidateCoded->wasRecentlyCreated || !empty($localCandidateCoded->getChanges()))) {
             return $localCandidateCoded;
         }
 

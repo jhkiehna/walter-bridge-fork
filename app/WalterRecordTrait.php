@@ -10,7 +10,7 @@ trait WalterRecordTrait
     {
         $user = User::where('walter_id', $consultantId)->first();
 
-        return $user ? $user->central_id : null;
+        return $user ? $user->central_id : 1;
     }
 
     public function updateCentralId()

@@ -16,6 +16,7 @@ class UserTableSeeder extends Seeder
             factory(User::class)->create([
                 'central_id' => $user['central_id'],
                 'walter_id' => $user['walter_id'],
+                'intranet_id' => $user['intranet_id'],
                 'email' => $user['email']
             ]);
         });

@@ -63,20 +63,19 @@ class Call extends Model
         $localCall = self::updateOrCreate(
             ['stats_call_id' => $call->id],
             [
-                'central_id' => $centralId ?? 1,
+                'central_id' => $centralId,
                 'intranet_user_id' => $call->user_id,
                 'valid' => $call->valid,
                 'concatenated_number' => empty($concatenated_number) ? 0 : $concatenated_number,
                 'dialed_number' => $call->dialed_number,
                 'international' => $call->international,
-                'type' => $call->type,
+                'type' => $call->type == 'Outgoing' ? 'Outgoing' : 'Incoming',
                 'date' => $call->date,
                 'duration' => $call->duration,
-                'updated_at' => $call->updated_at
             ]
         );
 
-        if ($centralId) {
+        if ($centralId != 1 && ($localCall->wasRecentlyCreated || !empty($localCall->getChanges()))) {
             return $localCall;
         }
 
@@ -87,7 +86,7 @@ class Call extends Model
     {
         $user = User::where('intranet_id', $intranetId)->first();
 
-        return $user ? $user->central_id : null;
+        return $user ? $user->central_id : 1;
     }
 
     public function updateCentralId()
@@ -120,7 +119,7 @@ class Call extends Model
                         $libPhoneNumberObject,
                         PhoneNumberFormat::E164
                     ),
-                    'incoming' => $this->type == 'Incoming' ? true : false,
+                    'incoming' => $this->type == 'Outgoing' ? false : true,
                     'duration' => $this->duration,
                     'created_at' => $this->date->toISOString(),
                 ]
@@ -167,12 +166,12 @@ class Call extends Model
 
             return $this->getPhoneUtility()->parse("$phoneNumber", 'US');
         } catch (\libphonenumber\NumberParseException $e) {
-            \Sentry\configureScope(
-                function (\Sentry\State\Scope $scope) use ($e): void {
-                    $scope->setExtra('CallModel', json_encode($this));
-                }
-            );
-            app('sentry')->captureException($e);
+            // \Sentry\configureScope(
+            //     function (\Sentry\State\Scope $scope) use ($e): void {
+            //         $scope->setExtra('CallModel', json_encode($this));
+            //     }
+            // );
+            // app('sentry')->captureException($e);
 
             logger()->error("Failed to parse number for call with ID $this->id");
             info($e->getMessage());

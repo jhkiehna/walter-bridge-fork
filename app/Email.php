@@ -54,7 +54,7 @@ class Email extends Model
         $localEmail = self::updateOrCreate(
             ['walter_email_id' => $email->id],
             [
-                'central_id' => $centralId ?? 1,
+                'central_id' => $centralId,
                 'participant_email' => $email->participant_email,
                 'user_email' => $email->user_email,
                 'action' => $email->action,
@@ -63,7 +63,7 @@ class Email extends Model
             ]
         );
 
-        if ($centralId) {
+        if ($centralId != 1 && ($localEmail->wasRecentlyCreated || !empty($localEmail->getChanges()))) {
             return $localEmail;
         }
 

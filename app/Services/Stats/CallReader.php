@@ -35,8 +35,7 @@ class CallReader extends Reader
                 'raw',
                 'updated_at'
             ])
-            ->where('raw', '!=', 'NEXUS')
-            ->where('type', '!=', 'Transfer');
+            ->where('raw', '!=', 'NEXUS');
     }
 
     public function getNewRecords()
@@ -60,5 +59,13 @@ class CallReader extends Reader
         return $this->query
             ->where('date', '>=', $startDate)
             ->where('date', '<=', $endDate);
+    }
+
+    public function getTransferOnlyQuery(Carbon $startDate, Carbon $endDate)
+    {
+        return $this->query
+            ->where('date', '>=', $startDate)
+            ->where('date', '<=', $endDate)
+            ->where('type', '=', 'Transfer');
     }
 }
