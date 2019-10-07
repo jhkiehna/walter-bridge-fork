@@ -69,7 +69,7 @@ class Call extends Model
                 'concatenated_number' => empty($concatenated_number) ? 0 : $concatenated_number,
                 'dialed_number' => $call->dialed_number,
                 'international' => $call->international,
-                'type' => $call->type,
+                'type' => $call->type == 'Outgoing' ? 'Outgoing' : 'Incoming',
                 'date' => $call->date,
                 'duration' => $call->duration,
             ]
