@@ -79,7 +79,9 @@ class Call extends Model
             return $localCall;
         }
 
-        FailedItem::make()->failable()->associate($localCall)->save();
+        if ($centralId == 1) {
+            FailedItem::make()->failable()->associate($localCall)->save();
+        }
     }
 
     protected static function translateIntranetUserIdToCentralUserId($intranetId)
