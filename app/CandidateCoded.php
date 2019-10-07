@@ -40,9 +40,9 @@ class CandidateCoded extends Model
         return $this->belongsTo(User::class, 'central_id', 'central_id');
     }
 
-    public function failedItems()
+    public function failedItem()
     {
-        return $this->morphMany(FailedItem::class, 'failable');
+        return $this->morphOne(FailedItem::class, 'failable');
     }
 
     public static function writeWithForeignRecord($candidateCoded)

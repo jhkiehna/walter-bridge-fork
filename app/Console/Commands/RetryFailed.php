@@ -2,17 +2,16 @@
 
 namespace App\Console\Commands;
 
+use App\Call;
 use App\Email;
 use App\Sendout;
 use App\Interview;
-use App\FailedItem;
 use App\CandidateCoded;
 use Illuminate\Console\Command;
-use Illuminate\Support\Collection;
 
 class RetryFailed extends Command
 {
-    protected $signature = 'retry-failed {recordType=all : accepted values: interviews | sendouts | coded | calls | emails}';
+    protected $signature = 'retry-failed {recordType : accepted values: interviews | sendouts | coded | calls | emails}';
     protected $description = 'Attempt to process any fetched records that ended up in the failed items table';
 
     /**
@@ -32,26 +31,23 @@ class RetryFailed extends Command
      */
     public function handle()
     {
-        $failedItems = new Collection();
+        $query = null;
 
         switch (strtolower($this->argument('recordType'))) {
-            case 'all':
-                $failedItems = FailedItem::all();
-                break;
             case 'interviews':
-                $failedItems = Interview::failedItems();
+                $query = Interview::has('failedItem')->orderBy('id');
                 break;
             case 'sendouts':
-                $failedItems = Sendout::failedItems();
+                $query = Sendout::has('failedItem')->orderBy('id');
                 break;
             case 'coded':
-                $failedItems = CandidateCoded::failedItems();
+                $query = CandidateCoded::has('failedItem')->orderBy('id');
                 break;
             case 'calls':
-                $failedItems = Call::failedItems();
+                $query = Call::has('failedItem')->orderBy('id');
                 break;
             case 'emails':
-                $failedItems = Email::failedItems();
+                $query = Email::has('failedItem')->orderBy('id');
                 break;
             default:
                 $this->error("\n Unknown argument: {$this->argument('recordType')}\n");
@@ -60,20 +56,37 @@ class RetryFailed extends Command
                 return;
         }
 
-        if ($failedItems->isEmpty()) {
+        if ($query->count() == 0) {
             $this->info("\n No failed items for {$this->argument('recordType')} found \n");
             $this->info("\n Aborting...\n");
             return;
         }
 
-        $failedItems->each(function ($failedItem) {
-            $oldCentralId = $failedItem->failable->central_id;
-            $failedItem->failable->updateCentralId();
+        $progressBar = $this->output->createProgressBar($query->count());
+        $progressBar->setFormat(" %message% \n\n %current%/%max% [%bar%] %percent:3s%% \n\n Elapsed / Estimated: \t %elapsed:6s% / %estimated:-6s% \n Memory Used: %memory:6s%\n");
+        $progressBar->setMessage("Processing failed {$this->argument('recordType')}...");
+        $progressBar->start();
 
-            if ($this->failable->central_id != $oldCentralId) {
-                $failedItem->failable->publishToKafka();
-                $failedItem->delete();
+        $query->chunk(1000, function ($chunk) use ($progressBar) {
+            if (!empty($chunk)) {
+                $chunk->each(function ($failedRecord) use ($progressBar) {
+                    $oldCentralId = $failedRecord->central_id;
+                    $failedRecord->updateCentralId();
+
+                    $failedRecord->refresh();
+
+                    if ($failedRecord->central_id != $oldCentralId) {
+                        $failedRecord->publishToKafka();
+                        $failedRecord->failedItem->delete();
+                    }
+
+                    $progressBar->advance();
+                });
             }
         });
+
+        $progressBar->finish();
+
+        $this->info("\n Processing Complete \n");
     }
 }
