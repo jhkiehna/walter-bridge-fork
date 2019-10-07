@@ -6,7 +6,9 @@ use App\Call;
 use Carbon\Carbon;
 use Tests\TestCase;
 use App\Jobs\PublishKafkaJob;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use libphonenumber\geocoding\PhoneNumberOfflineGeocoder;
 
@@ -256,5 +258,92 @@ class CallTest extends TestCase
                 return false;
             }
         });
+    }
+
+    public function testOnlyRecentlyCreatedOrUpdatedCallsAreReturnedFromWriteWithForeignRecord()
+    {
+        Artisan::call("db:seed", [
+            "--class" => "UserTableSeeder",
+            "--database" => "sqlite_testing",
+            "--env" => "testing"
+        ]);
+        DB::connection('sqlite_stats_test')
+            ->table('calls')
+            ->truncate();
+        DB::connection('sqlite_stats_test')
+            ->table('calls')
+            ->insert([
+                [
+                    'user_id' => 2,
+                    'valid' => true,
+                    'areacode' => 828,
+                    'phone_number' => 1111111,
+                    'dialed_number' => 18281111111,
+                    'international' => false,
+                    'type' => 'Incoming',
+                    'date' => Carbon::now()->subDays(1),
+                    'duration' => 50,
+                    'raw' => '',
+                    'updated_at' => Carbon::now()->subDays(1)
+                ],
+                [
+                    'user_id' => 2,
+                    'valid' => true,
+                    'areacode' => rand(111, 999),
+                    'phone_number' => rand(1111111, 9999999),
+                    'dialed_number' => rand(1111111111, 9999999999),
+                    'international' => false,
+                    'type' => 'Incoming',
+                    'date' => Carbon::now()->subDays(1),
+                    'duration' => rand(1, 1000),
+                    'raw' => '',
+                    'updated_at' => Carbon::now()->subDays(1)
+                ], [
+                    'user_id' => 2,
+                    'valid' => true,
+                    'areacode' => rand(111, 999),
+                    'phone_number' => rand(1111111, 9999999),
+                    'dialed_number' => rand(1111111111, 9999999999),
+                    'international' => false,
+                    'type' => 'Incoming',
+                    'date' => Carbon::now()->subDays(1),
+                    'duration' => rand(1, 1000),
+                    'raw' => '',
+                    'updated_at' => Carbon::now()->subDays(1)
+                ]
+            ]);
+
+        factory(Call::class)->create([
+            'central_id' => 2,
+            'stats_call_id' => 1,
+            'intranet_user_id' => 2,
+            'valid' => true,
+            'dialed_number' => 18281111111,
+            'concatenated_number' => 8281111111,
+            'international' => false,
+            'type' => 'Incoming',
+            'duration' => 50,
+            'date' => Carbon::now()->subDays(1),
+        ]);
+        factory(Call::class)->create([
+            'central_id' => 2,
+            'stats_call_id' => 2,
+            'type' => 'Outgoing',
+        ]);
+
+        $foreignCalls = DB::connection('sqlite_stats_test')
+            ->table('calls')
+            ->get();
+
+        $localRecord1 = Call::writeWithForeignRecord($foreignCalls[0]);
+        $localRecord2 = Call::writeWithForeignRecord($foreignCalls[1]);
+        $localRecord3 = Call::writeWithForeignRecord($foreignCalls[2]);
+
+        $this->assertNull($localRecord1);
+        $this->assertNotNull($localRecord2);
+        $this->assertTrue(!empty($localRecord2->getChanges()));
+        $this->assertTrue(!$localRecord2->wasRecentlyCreated);
+        $this->assertNotNull($localRecord3);
+        $this->assertTrue($localRecord3->wasRecentlyCreated);
     }
 }
