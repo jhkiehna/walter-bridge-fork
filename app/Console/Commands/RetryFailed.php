@@ -31,8 +31,6 @@ class RetryFailed extends Command
      */
     public function handle()
     {
-        $query = null;
-
         switch (strtolower($this->argument('recordType'))) {
             case 'interviews':
                 $query = Interview::has('failedItem')->orderBy('id');
