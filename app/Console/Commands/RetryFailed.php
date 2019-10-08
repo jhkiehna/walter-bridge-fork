@@ -69,11 +69,9 @@ class RetryFailed extends Command
             if (!empty($chunk)) {
                 $chunk->each(function ($failedRecord) use ($progressBar) {
                     $oldCentralId = $failedRecord->central_id;
-                    $failedRecord->updateCentralId();
+                    $updatedRecord = $failedRecord->updateCentralId();
 
-                    $failedRecord->refresh();
-
-                    if ($failedRecord->central_id != $oldCentralId) {
+                    if ($updatedRecord && $updatedRecord->central_id != $oldCentralId) {
                         $failedRecord->publishToKafka();
                         $failedRecord->failedItem->delete();
                     }

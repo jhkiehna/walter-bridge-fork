@@ -105,6 +105,8 @@ class Call extends Model
         $this->update([
             'central_id' => $user->central_id
         ]);
+
+        return $this;
     }
 
     public function publishToKafka()
