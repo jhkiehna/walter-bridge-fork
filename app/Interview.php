@@ -39,9 +39,9 @@ class Interview extends Model
         return $this->belongsTo(User::class, 'central_id', 'central_id');
     }
 
-    public function failedItems()
+    public function failedItem()
     {
-        return $this->morphMany(FailedItem::class, 'failable');
+        return $this->morphOne(FailedItem::class, 'failable');
     }
 
     public static function writeWithForeignRecord($interview)
@@ -61,7 +61,9 @@ class Interview extends Model
             return $localInterview;
         }
 
-        FailedItem::make()->failable()->associate($localInterview)->save();
+        if ($centralId == 1) {
+            FailedItem::make()->failable()->associate($localInterview)->save();
+        }
     }
 
     public function publishToKafka()

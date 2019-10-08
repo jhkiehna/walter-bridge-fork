@@ -39,9 +39,9 @@ class Sendout extends Model
         return $this->belongsTo(User::class, 'central_id', 'central_id');
     }
 
-    public function failedItems()
+    public function failedItem()
     {
-        return $this->morphMany(FailedItem::class, 'failable');
+        return $this->morphOne(FailedItem::class, 'failable');
     }
 
     public static function writeWithForeignRecord($sendout)
@@ -61,7 +61,9 @@ class Sendout extends Model
             return $localSendout;
         }
 
-        FailedItem::make()->failable()->associate($localSendout)->save();
+        if ($centralId == 1) {
+            FailedItem::make()->failable()->associate($localSendout)->save();
+        }
     }
 
     public function publishToKafka()

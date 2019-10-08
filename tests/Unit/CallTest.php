@@ -86,12 +86,12 @@ class CallTest extends TestCase
         $this->assertEquals($countryName2, "France");
     }
 
-    public function testPublishToKafkaMethodCreatesTheCorrectObjectForInternationalNumber()
+    public function testPublishToKafkaMethodCreatesTheCorrectObjectForIncomingInternationalNumber()
     {
         Queue::fake();
 
         factory(Call::class)->states('international')->create([
-            'dialed_number' => 11441946695420,
+            'dialed_number' => 441946695420,
             'type' => 'Incoming',
             'duration' => 50,
             'date' => Carbon::now(),
@@ -122,12 +122,48 @@ class CallTest extends TestCase
         });
     }
 
-    public function testPublishToKafkaMethodCreatesTheCorrectObjectForNationalNumber()
+    public function testPublishToKafkaMethodCreatesTheCorrectObjectForOutgoingInternationalNumber()
+    {
+        Queue::fake();
+
+        factory(Call::class)->states('international')->create([
+            'dialed_number' => 11441946695420,
+            'type' => 'Outgoing',
+            'duration' => 50,
+            'date' => Carbon::now(),
+        ]);
+
+        $call = Call::first();
+
+        $expectedCallObject = (object) [
+            'type' => 'call',
+            'data' => (object) [
+                'id' => $call->stats_call_id,
+                'user_id' => $call->central_id,
+                'participant_number' => '+441946695420',
+                'incoming' => false,
+                'duration' => 50,
+                'created_at' => $call->date->toISOString(),
+            ]
+        ];
+
+        $call->publishToKafka();
+
+        Queue::assertPushed(PublishKafkaJob::class, function ($job) use ($expectedCallObject) {
+            if (json_encode($job->objectToPublish) == json_encode($expectedCallObject)) {
+                return true;
+            } else {
+                return false;
+            }
+        });
+    }
+
+    public function testPublishToKafkaMethodCreatesTheCorrectObjectForIncomingNationalNumber()
     {
         Queue::fake();
 
         factory(Call::class)->states('national')->create([
-            'dialed_number' => 18282519900,
+            'dialed_number' => 8282519900,
             'type' => 'Incoming',
             'duration' => 50,
             'date' => Carbon::now(),
@@ -142,6 +178,42 @@ class CallTest extends TestCase
                 'user_id' => $call->central_id,
                 'participant_number' => '+18282519900',
                 'incoming' => true,
+                'duration' => 50,
+                'created_at' => $call->date->toISOString(),
+            ]
+        ];
+
+        $call->publishToKafka();
+
+        Queue::assertPushed(PublishKafkaJob::class, function ($job) use ($expectedCallObject) {
+            if (json_encode($job->objectToPublish) == json_encode($expectedCallObject)) {
+                return true;
+            } else {
+                return false;
+            }
+        });
+    }
+
+    public function testPublishToKafkaMethodCreatesTheCorrectObjectForOutgoingNationalNumber()
+    {
+        Queue::fake();
+
+        factory(Call::class)->states('national')->create([
+            'dialed_number' => 18282519900,
+            'type' => 'Outgoing',
+            'duration' => 50,
+            'date' => Carbon::now(),
+        ]);
+
+        $call = Call::first();
+
+        $expectedCallObject = (object) [
+            'type' => 'call',
+            'data' => (object) [
+                'id' => $call->stats_call_id,
+                'user_id' => $call->central_id,
+                'participant_number' => '+18282519900',
+                'incoming' => false,
                 'duration' => 50,
                 'created_at' => $call->date->toISOString(),
             ]

@@ -27,5 +27,7 @@ trait WalterRecordTrait
         $this->update([
             'central_id' => $user->central_id
         ]);
+
+        return $this;
     }
 }

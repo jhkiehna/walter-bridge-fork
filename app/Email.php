@@ -42,9 +42,9 @@ class Email extends Model
         return $this->belongsTo(User::class, 'central_id', 'central_id');
     }
 
-    public function failedItems()
+    public function failedItem()
     {
-        return $this->morphMany(FailedItem::class, 'failable');
+        return $this->morphOne(FailedItem::class, 'failable');
     }
 
     public static function writeWithForeignRecord($email)
@@ -67,7 +67,9 @@ class Email extends Model
             return $localEmail;
         }
 
-        FailedItem::make()->failable()->associate($localEmail)->save();
+        if ($centralId == 1) {
+            FailedItem::make()->failable()->associate($localEmail)->save();
+        }
     }
 
     public function publishToKafka()
