@@ -151,30 +151,10 @@ class Call extends Model
 
         try {
             if ($this->international == true) {
-                if ($this->dialed_number == 0) {
-                    $phoneNumber = $this->concatenated_number;
-                } else {
-                    if ($this->type == 'Incoming') {
-                        $phoneNumber = $this->dialed_number;
-                    } else {
-                        $phoneNumber = substr("{$this->dialed_number}", 2);
-                    }
-                }
-
-                return $this->getPhoneUtility()->parse("+$phoneNumber", "");
+                return $this->getPhoneUtility()->parse("+{$this->preparePhoneNumber(2)}", "");
             }
 
-            if ($this->dialed_number == 0) {
-                $phoneNumber = $this->concatenated_number;
-            } else {
-                if ($this->type == 'Incoming') {
-                    $phoneNumber = $this->dialed_number;
-                } else {
-                    $phoneNumber = substr("{$this->dialed_number}", 1);
-                }
-            }
-
-            return $this->getPhoneUtility()->parse("$phoneNumber", 'US');
+            return $this->getPhoneUtility()->parse("{$this->preparePhoneNumber(1)}", 'US');
         } catch (\libphonenumber\NumberParseException $e) {
             // \Sentry\configureScope(
             //     function (\Sentry\State\Scope $scope) use ($e): void {
@@ -185,6 +165,19 @@ class Call extends Model
 
             logger()->error("Failed to parse number for call with ID $this->id");
             info($e->getMessage());
+        }
+    }
+
+    private function preparePhoneNumber(int $subString)
+    {
+        if ($this->dialed_number == 0) {
+            return $this->concatenated_number;
+        } else {
+            if ($this->type == 'Incoming') {
+                return $this->dialed_number;
+            } else {
+                return substr("{$this->dialed_number}", $subString);
+            }
         }
     }
 }
