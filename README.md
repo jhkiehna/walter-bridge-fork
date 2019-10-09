@@ -1,4 +1,8 @@
-# Walter Bridge
+# API Bridge
+
+Laravel app that collects new records created in a database, processes them based on some criteria, and publishes them to a Kafka Event stream to be consumed by another API.
+
+This was built for the purpose of Migrating a large amount of data from an older system to a newer one.
 
 ## Deploy Instructions
 
